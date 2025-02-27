@@ -1,0 +1,579 @@
+<%-- 
+    Document   : index
+    Created on : 19 Feb, 2025, 2:34:19 PM
+    Author     : vikram
+--%>
+
+
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.sql.ResultSet"%>
+<%@page import="db.dbcon"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+
+
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>VNS</title>
+
+        <!-- Favicons -->
+        <link href="assets/img/favicon.png" rel="icon">
+        <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.gstatic.com" rel="preconnect">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+        <!-- Vendor CSS Files -->
+        <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+        <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+        <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+        <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+        <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+        <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+        <!-- Template Main CSS File -->
+        <link href="assets/css/style.css" rel="stylesheet">
+
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <!-- Include SheetJS for Excel export -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+        <!-- Include FontAwesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+        <!-- Include SweetAlert for confirmation dialogs -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <!-- Include FontAwesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        <style>
+            .logo-container {
+                display: flex;
+                align-items: center; /* Align elements vertically */
+                position: relative;
+            }
+
+            .nha-title {
+                font-size: 28px; /* Adjust font size */
+                font-weight: bold;
+                color: #333; /* Customize color */
+
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .nha-logo {
+                width: 180px; /* Adjust logo size */
+                height: auto;
+            }
+
+
+
+
+
+            .loader {
+                position: fixed; /* Fixed position to center it on the screen */
+                top: 50%; /* Center vertically */
+                left: 50%; /* Center horizontally */
+                transform: translate(-50%, -50%); /* Adjust for exact center */
+                z-index: 1000; /* Ensure it's above other elements */
+                display: none; /* Initially hidden */
+            }
+
+            /* Optional: Add a semi-transparent overlay */
+            .loader-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+                z-index: 999; /* Below the loader but above other content */
+                display: none; /* Initially hidden */
+            }
+
+            .spinner-border {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            .nha-logo {
+                width: 100px; /* Adjust the size as needed */
+                height: auto; /* Maintain aspect ratio */
+            }
+
+
+
+
+            /* Basic Reset */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            /* Sticky Header */
+            .header {
+                background-color: #fff;
+                padding: 10px 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 0;
+                left: 250px; /* Shift header to the right by sidebar width */
+                width: calc(100% - 250px); /* Adjust width to account for sidebar */
+                z-index: 999; /* Ensure header is below sidebar */
+                transition: left 0.3s ease;
+            }
+
+            .menu-icon {
+                font-size: 24px;
+                cursor: pointer;
+                margin-right: 20px;
+            }
+
+            /* Sidebar (Visible by default) */
+            .sidebar {
+                width: 250px;
+                height: 100vh;
+                background-color: #2c3e50;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1000; /* Ensure sidebar is above other content */
+                transition: left 0.3s ease;
+            }
+
+            /* Main Content (Shifted to the right by default) */
+            .main {
+                margin-left: 250px; /* Shift main content to the right */
+                padding: 20px;
+                transition: margin-left 0.3s ease;
+            }
+
+            /* Footer */
+            .footer {
+                background-color: #f8f9fa;
+                padding: 20px;
+                text-align: center;
+                position: fixed;
+                bottom: 0;
+                width: calc(100% - 250px); /* Adjust width to account for sidebar */
+                margin-left: 250px; /* Shift footer to the right */
+                transition: margin-left 0.3s ease;
+            }
+
+
+
+            /* Sidebar Navigation Items */
+            .sidebar-nav .nav-link {
+                color: #333333; /* Dark gray for better readability */
+                font-size: 16px; /* Comfortable font size */
+
+
+            }
+
+
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                /* Hide sidebar by default on smaller screens */
+                .sidebar {
+                    left: -250px;
+                }
+
+                /* Show sidebar when active */
+                .sidebar.active {
+                    left: 0;
+                }
+
+                /* Shift header, main content, and footer when sidebar is active */
+                .sidebar.active + .header,
+                .sidebar.active + .header + .main,
+                .sidebar.active + .header + .main + .footer {
+                    left: 250px;
+                }
+
+                /* Reset header, main content, and footer position when sidebar is hidden */
+                .header,
+                .main,
+                .footer {
+                    left: 0;
+                    width: 100%;
+                }
+            }
+
+
+
+
+
+
+        </style>
+    </head>
+    <%
+        // Get the current date in YYYY-MM-DD format
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = sdf.format(new java.util.Date());
+    %>
+    <body
+        <!-- ======= Header ======= -->
+        <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav">
+        <li class="nav-item mt-3">
+            <a class="nav-link" href="index.jsp">Current Day Reports</a>
+        </li>
+        <li class="nav-item mt-3">
+            <a class="nav-link" href="previous.jsp">Previous Day Reports</a>
+        </li>
+        <li class="nav-item mt-3">
+            <a class="nav-link" href="month.jsp">Month Wise Reports</a>
+        </li>
+        <li class="nav-item mt-3">
+            <a class="nav-link" href="Dashboard.jsp">Dashboard</a>
+        </li>
+        
+            <li class="nav-item mt-3">
+            <a class="nav-link" href="GetAllData.jsp">Get All</a>
+        </li>
+    </ul>
+</aside>
+
+
+        <header id="header" class="header fixed-top d-flex align-items-center">
+            <!-- Menu Icon (Visible only on smaller screens) -->
+            <div class="menu-icon d-block d-md-none" onclick="toggleSidebar()">
+                <i class="bi bi-list"></i> <!-- Use any icon library like Bootstrap Icons -->
+            </div>
+
+            <!-- Logo -->
+            <div class="left-logo">
+                <img id="LoginLogoPage_1" src="https://app.virtuosorbm.com/assets/img/logo.png" style="width:60%;">
+            </div>
+        </header>
+
+
+        <main id="main" class="main">
+            <!-- Logo and Title -->
+            <div class="d-flex justify-content-between align-items-center mt-3 logo-container">
+                <h3 class="nha-title mx-auto">NHA All Reports</h3> 
+                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" 
+                     alt="National Health Authority" class="nha-logo">
+            </div>
+
+            <!-- Loader Overlay -->
+            <div id="loader-overlay" class="loader-overlay"></div>
+
+            <!-- Loader -->
+            <div id="loader" class="loader">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <%
+                try {
+                    dbcon db = new dbcon();
+                    db.getCon("nha_cdr");
+                    String sql = "SELECT accountname FROM AccountDetails WHERE Setup = '-1';";
+                    ResultSet rs = db.getResult(sql);
+            %>
+            <section class="section dashboard mt-5">
+                <form id="dataForm" action="/action_page.php" method="POST">
+                    <div class="row">
+                        <!-- Username Dropdown -->
+                        <div class="col-md-4 col-sm-3 col-xs-12">
+                            <label for="accountname">Username</label>
+                            <select class="form-select mt-2" id="accountname" name="accountname">
+                                <%
+                                    while (rs.next()) {
+                                        String accountname = rs.getString("accountname");
+                                %>
+                                <option value="<%= accountname%>"><%= accountname%></option>
+                                <%
+                                    }
+                                %>
+                            </select>
+                        </div>
+
+                        <!-- From Date Input -->
+                        <div class="col-md-4 col-sm-3 col-xs-12">
+                            <label for="fromDate">From</label>
+                            <input class="form-control mt-2" type="date" id="fromDate" name="fromDate" value="<%= currentDate%>">
+                        </div>
+
+                        <!-- To Date Input -->
+                        <div class="col-md-4 col-sm-3 col-xs-12">
+                            <label for="toDate">To</label>
+                            <input class="form-control mt-2" type="date" id="toDate" name="toDate" value="<%= currentDate%>">
+                        </div>
+
+                        <!-- Submit and Export Buttons -->
+                        <div class="col-md-12 col-sm-12 col-xs-12 mt-5 d-flex justify-content-between">
+                            <div>
+                                <button type="button" onclick="getData()" class="btn btn-success">Submit</button>
+                            </div>
+                            <div>
+                                <button id="excelBtn" type="button" onclick="exportToExcel()" class="btn btn-primary" disabled>
+                                    <i class="fas fa-file-excel"></i> Export to Excel
+                                </button>
+                                <button id="csvBtn" type="button" onclick="exportToCSV()" class="btn btn-secondary" disabled>
+                                    <i class="fas fa-file-csv"></i> Export to CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Table to display data -->
+                <div class="row mt-4">
+                    <div class="col-md-12 text-center">
+                        <table id="dataTable" class="table table-striped table-bordered" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Username</th>
+                                    <th>Total</th>
+                                    <th>Success</th>
+                                    <th>Failed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be populated here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Chart Canvas -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <canvas id="dataChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </section>
+            <%
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            %>
+        </main>
+
+        <div id="loader" class="loader" style="display: none;">
+            <div class="spinner-border text-primary " role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <!-- ======= Footer ======= -->
+        <footer id="footer" class="footer">
+            <div class="copyright">
+                &copy; Copyright <strong><span>VNS</span></strong>. All Rights Reserved
+            </div>
+
+        </footer><!-- End Footer -->
+
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+        <!-- Template Main JS File -->
+
+
+
+        <script>
+            function getData() {
+                // Show loader
+                document.getElementById('loader').style.display = 'block';
+
+                // Get form values
+                const accountname = document.getElementById('accountname').value;
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+
+                // Prepare the data as a simple URL-encoded string
+                const data = 'accountname=' + encodeURIComponent(accountname) +
+                        '&fromDate=' + encodeURIComponent(fromDate) +
+                        '&toDate=' + encodeURIComponent(toDate);
+
+                // Send AJAX request using fetch
+                fetch('NhaServlet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: data // Send data as URL-encoded string
+                })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json(); // Parse the JSON response
+                        })
+                        .then(data => {
+                            console.log("Response from servlet:", data);
+                            if (data.length === 0) {
+                                // No records found
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'No Records Found',
+                                    text: 'No data was found for the given criteria.',
+                                });
+                            } else {
+                                updateTable(data); // Update the table with the response data
+                            }
+                            // Enable export buttons
+                            document.getElementById('excelBtn').disabled = false;
+                            document.getElementById('csvBtn').disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'An error occurred while fetching data.',
+                            });
+                        })
+                        .finally(() => {
+                            // Hide loader after completion
+                            document.getElementById('loader').style.display = 'none';
+                        });
+            }
+
+            function updateTable(data) {
+                const tableBody = document.querySelector("#dataTable tbody");
+                tableBody.innerHTML = ""; // Clear existing table data
+
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    // Add Date cell
+                    const dateCell = document.createElement("td");
+                    dateCell.textContent = item.date; // Ensure 'date' is in the JSON response
+                    row.appendChild(dateCell);
+
+                    // Add Username cell
+                    const usernameCell = document.createElement("td");
+                    usernameCell.textContent = item.username;
+                    row.appendChild(usernameCell);
+
+                    // Add Total cell
+                    const totalCell = document.createElement("td");
+                    totalCell.textContent = item.total;
+                    row.appendChild(totalCell);
+
+                    // Add Success cell
+                    const successCell = document.createElement("td");
+                    successCell.textContent = item.success;
+                    row.appendChild(successCell);
+
+                    // Add Failed cell
+                    const failedCell = document.createElement("td");
+                    failedCell.textContent = item.failed;
+                    row.appendChild(failedCell);
+
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                });
+
+                // Show the table
+                document.getElementById('dataTable').style.display = 'table';
+            }
+
+            // Export to Excel
+            function exportToExcel() {
+                const table = document.getElementById("dataTable");
+                const rows = table.querySelectorAll("tbody tr");
+
+                if (rows.length === 0) {
+                    // Ask for confirmation if the table is empty
+                    Swal.fire({
+                        icon: 'question',
+                        title: 'Empty Table',
+                        text: 'The table is empty. Do you want to download an empty sheet?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+                            XLSX.writeFile(workbook, "NHA_Data.xlsx");
+                        }
+                    });
+                } else {
+                    const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+                    XLSX.writeFile(workbook, "NHA_Data.xlsx");
+                }
+            }
+
+            // Export to CSV
+            function exportToCSV() {
+                const table = document.getElementById("dataTable");
+                const rows = table.querySelectorAll("tbody tr");
+
+                if (rows.length === 0) {
+                    // Ask for confirmation if the table is empty
+                    Swal.fire({
+                        icon: 'question',
+                        title: 'Empty Table',
+                        text: 'The table is empty. Do you want to download an empty sheet?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const csvContent = getCSVContent(table);
+                            downloadCSV(csvContent, "NHA_Data.csv");
+                        }
+                    });
+                } else {
+                    const csvContent = getCSVContent(table);
+                    downloadCSV(csvContent, "NHA_Data.csv");
+                }
+            }
+
+            // Helper function to generate CSV content
+            function getCSVContent(table) {
+                const rows = table.querySelectorAll("tr");
+                let csvContent = "";
+
+                rows.forEach(row => {
+                    const rowData = [];
+                    row.querySelectorAll("th, td").forEach(cell => {
+                        rowData.push(cell.innerText);
+                    });
+                    csvContent += rowData.join(",") + "\n";
+                });
+
+                return csvContent;
+            }
+
+            // Helper function to download CSV
+            function downloadCSV(content, fileName) {
+                const blob = new Blob([content], {type: "text/csv;charset=utf-8;"});
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName;
+                link.click();
+            }
+        </script>
+
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+            <i class="bi bi-arrow-up-short"></i>
+        </a>
+     
+
+
+        
+    </body>
+</html>
