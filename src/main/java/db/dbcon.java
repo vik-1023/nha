@@ -1,20 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package db;
 
-/**
- *
- * @author pavy
- */
+
 import java.sql.*;
 
-/**
- *
- * @author parwinder
- */
 public class dbcon {
 
     Connection conn = null;
@@ -22,12 +11,12 @@ public class dbcon {
     //  String url = "jdbc:mysql://122.160.97.195:3306/";
     // "jdbc:mysql://localhost:3306/";
 
-   String url = "jdbc:mysql://localhost:3306/";
-   //String url = "jdbc:mysql://182.18.144.225:3306/";
+    //String url = "jdbc:mysql://localhost:3306/";
+  String url = "jdbc:mysql://182.18.144.225:3306/";
     ResultSet rs = null;
     String userName = "reports";
     String password = "reports@#123";
-  //    String userName = "root";
+    //    String userName = "root";
     // String password = "";
 
     public void getCon(String dbname) {
@@ -87,7 +76,7 @@ public class dbcon {
         try {
 
             if (conn != null) {
-                stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+                stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
                 //System.out.println("-- setUpdate-----" + sql);
                 i = stmt.executeUpdate(sql);
             }

@@ -36,7 +36,7 @@
 
 
 
-         <meta charset="utf-8">
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>VNS | NHA</title>
 
@@ -80,6 +80,36 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <style>
+
+            @media (min-width: 768px) {
+                .dropdown:hover .dropdown-menu {
+                    display: block;
+                    margin-top: 0;
+                }
+            }
+       
+            .dropdown-menu {
+                position: absolute;
+                top: 100%;
+                left: 20px;
+                z-index: 1000;
+                display: none;
+                float: left;
+                min-width: 13rem;
+                padding: 0.5rem 0;
+                margin: 0.125rem 0 0;
+                font-size: 1rem;
+                color: #000000;
+                text-align: left;
+                list-style: none;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid #e0e0ef;
+                border-radius: 0.25rem;
+            }
+
+
+
             .logo-container {
                 display: flex;
                 align-items: center; /* Align elements vertically */
@@ -153,8 +183,8 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 position: fixed;
                 top: 0;
-                left: 250px; /* Shift header to the right by sidebar width */
-                width: calc(100% - 250px); /* Adjust width to account for sidebar */
+                left: 0px; /* Shift header to the right by sidebar width */
+                width: 100%; /* Adjust width to account for sidebar */
                 z-index: 999; /* Ensure header is below sidebar */
                 transition: left 0.3s ease;
             }
@@ -171,10 +201,11 @@
                 height: 100vh;
                 background-color: #2c3e50;
                 position: fixed;
-                top: 0;
+                top: 63px;
                 left: 0;
                 z-index: 1000; /* Ensure sidebar is above other content */
                 transition: left 0.3s ease;
+                padding-top:0px;
             }
 
             /* Main Content (Shifted to the right by default) */
@@ -202,6 +233,7 @@
             .sidebar-nav .nav-link {
                 color: #333333; /* Dark gray for better readability */
                 font-size: 16px; /* Comfortable font size */
+                font-weight:500;
 
 
             }
@@ -237,10 +269,31 @@
             }
 
 
+            .sidebar-nav .nav-link:hover {
+                color: #000000;
+                background: #f6f9ff;
+            }
 
-
-
-
+            .m_t2-3 {
+                position: relative;
+                bottom: 7px;
+            }
+            .m_t-3 {
+                margin-top: 3px;
+            }
+            .m_t2-3 {
+                margin-top: 0px !important;
+            }
+            .left-logo {
+                float: left;
+                width: 93%;
+            }
+            #dataTable {
+                border: 1px solid #c9c4c4;
+            }
+            .mt-5 {
+                margin-top: 2rem !important;
+            }
         </style>
     </head>
     <%
@@ -257,23 +310,30 @@
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav">
                 <li class="nav-item mt-3">
-                    <a class="nav-link" href="Dashboard">Dashboard</a>
-                </li>
-                <li class="nav-item mt-3">
-                    <a class="nav-link" href="current">Current Day Reports</a>
-                </li>
-                <li class="nav-item mt-3">
-                    <a class="nav-link" href="previous">Previous Day Reports</a>
-                </li>
-                <li class="nav-item mt-3">
-                    <a class="nav-link" href="month">Month Wise Reports</a>
+                    <a class="nav-link" href="Dashboard">Dashboard</a> 
                 </li>
 
-                <li class="nav-item mt-3">
-                    <a href="Logout" class="btn btn-danger nav-link">Logout</a>
-                </li>
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reports
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                        <a class="nav-link" href="current">Current Day Reports</a>
+                        <a class="nav-link" href="previous">Previous Day Reports</a>
+                        <a class="nav-link" href="day"> Day Wise Reports</a>
+                        <a class="nav-link" href="weekly">Bi Weekly Reports</a>
+                        <a class="nav-link" href="month">Month Wise Reports</a>
+                        <a class="nav-link" href="quarterly">Quarterly Reports</a
+                    </div>   
+                <li class="nav-item">
+                    <a href="Logout" class="nav-link">Logout</a>
+                </li>
             </ul>
+
+
+
         </aside>
 
 
@@ -285,9 +345,11 @@
 
             <!-- Logo -->
             <div class="left-logo">
-                <img id="LoginLogoPage_1" src="https://app.virtuosorbm.com/assets/img/logo.png" style="width:60%;">
+                <img id="LoginLogoPage_1" src="https://app.virtuosorbm.com/assets/img/logo.png" style="width:10%;">
             </div>
-
+            <div class="right-logo">
+                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" alt="National Health Authority" class="nha-logo">
+            </div>
         </header>
 
 
@@ -295,8 +357,8 @@
             <!-- Logo and Title -->
             <div class="d-flex justify-content-between align-items-center mt-3 logo-container">
                 <h3 class="nha-title mx-auto">NHA Month Wise Reports</h3> 
-                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" 
-                     alt="National Health Authority" class="nha-logo">
+                <!--                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" 
+                                     alt="National Health Authority" class="nha-logo">-->
             </div>
 
             <!-- Loader Overlay -->
@@ -309,41 +371,34 @@
                 </div>
             </div>
 
-            <%
-                try {
-                    dbcon db = new dbcon();
-                    db.getCon("nha_cdr");
-                    String sql = "SELECT accountname FROM AccountDetails WHERE Setup = '-1';";
-                    ResultSet rs = db.getResult(sql);
-            %>
             <section class="section dashboard mt-5">
                 <form id="dataForm" action="NhaServlet" method="POST">
                     <div class="row">
-                        <!-- Environment Dropdown -->
+                          <div class="col-md-3 col-sm-3 col-xs-12">
+                            <label for="environment">Reports</label>
+                            <select class="form-select mt-2" onchange="window.location.href = this.value;">
+                                 <option value="month">Month Wise Reports</option>
+                                <option value="current">Current Day Reports</option>
+                                <option value="previous">Previous Day Reports</option>
+                               
+                                <option value="BiWeekly.jsp">Bi Weekly Reports</option>
+                               
+                                <option value="quarterly.jsp">Quarterly Reports</option>
+                            </select>
+                        </div>
                         <div class="col-md-3 col-sm-3 col-xs-12">
-                            <label for="environment">Environment</label>
-                            <select class="form-select mt-2" id="environment" name="environment">
-                                <option value="production">Production</option>
-                                <option value="sandbox">Sandbox</option>
+                            <label for="environment">Department</label>
+                            <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
+                                <option value="production">PMJAY</option>
+                                <option value="sandbox">ABDM</option>
                             </select>
                         </div>
 
                         <!-- Username Dropdown -->
-                        <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="accountname">Username</label>
                             <select class="form-select mt-2" id="accountname" name="accountname">
                                 <option value="All" selected>All</option>
-                                <%
-                                    rs.beforeFirst(); // Reset the ResultSet
-                                    while (rs.next()) {
-                                        String accountname = rs.getString("accountname");
-                                        if (accountname != null && !accountname.trim().isEmpty()) {
-                                %>
-                                <option value="<%= accountname%>"><%= accountname%></option>
-                                <%
-                                        }
-                                    }
-                                %>
                             </select>
                         </div>
 
@@ -351,18 +406,28 @@
                         <input type="hidden" id="getData" name="getData" value="true">
 
                         <!-- From Month Input -->
-                        <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="fromDate">From</label>
                             <input class="form-control mt-2" type="month" id="fromDate" name="fromDate" value="<%= currentMonthYearValue%>" onchange="updateDisplayText('fromDateDisplay', this.value)">
                             <small id="fromDateDisplay"></small>
                         </div>
 
                         <!-- To Month Input -->
-                        <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="toDate">To</label>
                             <input class="form-control mt-2" type="month" id="toDate" name="toDate" value="<%= currentMonthYearValue%>" onchange="updateDisplayText('toDateDisplay', this.value)">
                             <small id="toDateDisplay"></small>
                         </div>
+
+
+                        <div class="col-md-3 col-sm-3 col-xs-12 mt-2">
+                            <label for="groupBy3" class="m_t2-3">Group By:</label>
+                            <select class="form-control m_t-3" id="groupBy3" name="groupBy3">
+                                <option value="none">None</option>
+                                <option value="date">Date</option>
+                                <option value="account">Account</option>
+                            </select>
+                        </div>     
 
                         <!-- Submit and Export Buttons -->
                         <div class="col-md-12 col-sm-12 col-xs-12 mt-5 d-flex justify-content-between">
@@ -381,18 +446,17 @@
                     </div>
                 </form>
 
+                <!-- JavaScript to handle the environment change -->
+
+
 
                 <!-- Table to display data -->
                 <div class="row mt-4">
                     <div class="col-md-12 text-center">
                         <table id="dataTable" class="table table-striped table-bordered" style="display: none;">
                             <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Username</th>
-                                    <th>Total</th>
-                                    <th>Success</th>
-                                    <th>Failed</th>
+                                <tr id="tableHeaders">
+                                    <!-- Headers will be updated based on groupBy3 -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -409,11 +473,7 @@
                     </div>
                 </div>
             </section>
-            <%
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            %>
+
         </main>
 
         <div id="loader" class="loader" style="display: none;">
@@ -434,210 +494,292 @@
 
         <!-- Template Main JS File -->
 
+
         <script>
-    function updateDisplayText(displayId, value) {
-        const date = new Date(value + "-01");
-        const options = {year: 'numeric', month: 'short'};
-        document.getElementById(displayId).innerText = date.toLocaleDateString('en-US', options);
-    }
+            function updateUsernames() {
+                var environment = document.getElementById("environment").value;
 
-    async function getData(event) {
-        event.preventDefault();
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "getAccountNameServlet?environment=" + environment, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var usernames = JSON.parse(xhr.responseText);
+                        var accountnameDropdown = document.getElementById("accountname");
+                        accountnameDropdown.innerHTML = '<option value="All" selected>All</option>';
 
-        try {
-            document.getElementById('loader').style.display = 'block';
-
-            const accountname = document.getElementById('accountname').value;
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-            const environment = document.getElementById('environment').value;
-
-            const All = accountname === "All";
-
-            updateDisplayText('fromDateDisplay', fromDate);
-            updateDisplayText('toDateDisplay', toDate);
-
-            const data = new URLSearchParams({
-                accountname: All ? "" : accountname,
-                fromDate: fromDate,
-                toDate: toDate,
-                environment: environment
-            });
-
-            const response = await fetch('NhaServlet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: data,
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+                        usernames.forEach(function (username) {
+                            var option = document.createElement("option");
+                            option.value = username;
+                            option.textContent = username;
+                            accountnameDropdown.appendChild(option);
+                        });
+                    }
+                };
+                xhr.send();
             }
 
-            const responseData = await response.json();
-            console.log("Response from servlet:", responseData);
 
-            if (responseData.length === 0) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No Records Found',
-                    text: 'No data was found for the given criteria.',
+            // Initial call to populate the username dropdown based on the default environment
+            updateUsernames();
+        </script>
+
+
+        <script>
+            function updateDisplayText(displayId, value) {
+                const date = new Date(value + "-01");
+                const options = {year: 'numeric', month: 'short'};
+                document.getElementById(displayId).innerText = date.toLocaleDateString('en-US', options);
+            }
+
+            async function getData(event) {
+                event.preventDefault();
+
+                try {
+                    document.getElementById('loader').style.display = 'block';
+
+                    const accountname = document.getElementById('accountname').value;
+                    const fromDate = document.getElementById('fromDate').value;
+                    const toDate = document.getElementById('toDate').value;
+                    const environment = document.getElementById('environment').value;
+                    const groupBy3 = document.getElementById('groupBy3').value;
+
+                    const All = accountname === "All";
+
+                    updateDisplayText('fromDateDisplay', fromDate);
+                    updateDisplayText('toDateDisplay', toDate);
+
+                    const data = new URLSearchParams({
+                        accountname: All ? "" : accountname,
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        environment: environment,
+                        groupBy3: groupBy3
+                    });
+
+                    const response = await fetch('NhaServlet', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: data,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const responseData = await response.json();
+                    console.log("Response from servlet:", responseData);
+
+                    if (responseData.length === 0) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'No Records Found',
+                            text: 'No data was found for the given criteria.',
+                        });
+                    } else {
+                        updateTable(responseData);
+                    }
+
+                    document.getElementById('excelBtn').disabled = false;
+                    document.getElementById('csvBtn').disabled = false;
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while fetching data.',
+                    });
+                } finally {
+                    document.getElementById('loader').style.display = 'none';
+                }
+            }
+
+            function updateTable(data) {
+                const tableBody = document.querySelector("#dataTable tbody");
+                const tableHeaders = document.querySelector("#dataTable thead tr");
+                const groupBy3 = document.getElementById('groupBy3').value;
+                tableBody.innerHTML = ""; // Clear existing table data
+                tableHeaders.innerHTML = ""; // Clear existing headers
+
+                // Update headers based on groupBy3
+                if (groupBy3 === "date") {
+                    tableHeaders.innerHTML =
+                            "<th>Date</th>" +
+                            "<th>Total</th>" +
+                            "<th>Success</th>" +
+                            "<th>Failed</th>";
+                } else if (groupBy3 === "account") {
+                    tableHeaders.innerHTML =
+                            "<th>Username</th>" +
+                            "<th>Total</th>" +
+                            "<th>Success</th>" +
+                            "<th>Failed</th>";
+                } else {
+                    tableHeaders.innerHTML =
+                            "<th>Date</th>" +
+                            "<th>Username</th>" +
+                            "<th>Total</th>" +
+                            "<th>Success</th>" +
+                            "<th>Failed</th>";
+                }
+
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    if (groupBy3 === "date") {
+                        // Show only Date, Total, Success, Failed
+                        const dateCell = document.createElement("td");
+                        dateCell.textContent = item.date;
+                        row.appendChild(dateCell);
+
+                        const totalCell = document.createElement("td");
+                        totalCell.textContent = item.total;
+                        row.appendChild(totalCell);
+
+                        const successCell = document.createElement("td");
+                        successCell.textContent = item.success;
+                        row.appendChild(successCell);
+
+                        const failedCell = document.createElement("td");
+                        failedCell.textContent = item.failed;
+                        row.appendChild(failedCell);
+                    } else if (groupBy3 === "account") {
+                        // Show only Username, Total, Success, Failed
+                        const usernameCell = document.createElement("td");
+                        usernameCell.textContent = item.username;
+                        row.appendChild(usernameCell);
+
+                        const totalCell = document.createElement("td");
+                        totalCell.textContent = item.total;
+                        row.appendChild(totalCell);
+
+                        const successCell = document.createElement("td");
+                        successCell.textContent = item.success;
+                        row.appendChild(successCell);
+
+                        const failedCell = document.createElement("td");
+                        failedCell.textContent = item.failed;
+                        row.appendChild(failedCell);
+                    } else {
+                        // Show all columns
+                        const dateCell = document.createElement("td");
+                        dateCell.textContent = item.date;
+                        row.appendChild(dateCell);
+
+                        const usernameCell = document.createElement("td");
+                        usernameCell.textContent = item.username;
+                        row.appendChild(usernameCell);
+
+                        const totalCell = document.createElement("td");
+                        totalCell.textContent = item.total;
+                        row.appendChild(totalCell);
+
+                        const successCell = document.createElement("td");
+                        successCell.textContent = item.success;
+                        row.appendChild(successCell);
+
+                        const failedCell = document.createElement("td");
+                        failedCell.textContent = item.failed;
+                        row.appendChild(failedCell);
+                    }
+
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
                 });
-            } else {
-                updateTable(responseData);
+
+                // Show the table
+                document.getElementById('dataTable').style.display = 'table';
             }
 
-            document.getElementById('excelBtn').disabled = false;
-            document.getElementById('csvBtn').disabled = false;
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An error occurred while fetching data.',
-            });
-        } finally {
-            document.getElementById('loader').style.display = 'none';
-        }
-    }
+            function exportToExcel() {
+                const table = document.getElementById("dataTable");
+                const rows = table.querySelectorAll("tbody tr");
 
-    function updateTable(data) {
-        const tableBody = document.querySelector("#dataTable tbody");
-        tableBody.innerHTML = "";
+                const username = document.getElementById('accountname').value || "All";
+                const environment = document.getElementById('environment').value || "Default";
+                const filename = username + "_" + environment + ".xlsx";
 
-        let totalSum = 0, successSum = 0, failedSum = 0;
-
-        data.forEach(item => {
-            const row = document.createElement("tr");
-
-            const dateCell = document.createElement("td");
-            dateCell.textContent = item.date;
-            row.appendChild(dateCell);
-
-            const usernameCell = document.createElement("td");
-            usernameCell.textContent = item.username;
-            row.appendChild(usernameCell);
-
-            const totalCell = document.createElement("td");
-            totalCell.textContent = item.total;
-            row.appendChild(totalCell);
-
-            const successCell = document.createElement("td");
-            successCell.textContent = item.success;
-            row.appendChild(successCell);
-
-            const failedCell = document.createElement("td");
-            failedCell.textContent = item.failed;
-            row.appendChild(failedCell);
-
-            tableBody.appendChild(row);
-
-            totalSum += parseInt(item.total) || 0;
-            successSum += parseInt(item.success) || 0;
-            failedSum += parseInt(item.failed) || 0;
-        });
-
-        const totalRow = document.createElement("tr");
-        totalRow.innerHTML = 
-            "<td colspan='2' style='font-weight: bold; text-align: center;'>Total:</td>" +
-            "<td style='font-weight: bold;'>" + totalSum + "</td>" +
-            "<td style='font-weight: bold;'>" + successSum + "</td>" +
-            "<td style='font-weight: bold;'>" + failedSum + "</td>";
-        tableBody.appendChild(totalRow);
-
-        document.getElementById('dataTable').style.display = 'table';
-    }
-
-    function exportToExcel() {
-        const table = document.getElementById("dataTable");
-        const rows = table.querySelectorAll("tbody tr");
-
-        const username = document.getElementById('accountname').value || "All";
-        const environment = document.getElementById('environment').value || "Default";
-        const filename = username + "_" + environment + ".xlsx";
-
-        if (rows.length === 0) {
-            Swal.fire({
-                icon: 'question',
-                title: 'Empty Table',
-                text: 'The table is empty. Do you want to download an empty sheet?',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-            }).then((result) => {
-                if (result.isConfirmed) {
+                if (rows.length === 0) {
+                    Swal.fire({
+                        icon: 'question',
+                        title: 'Empty Table',
+                        text: 'The table is empty. Do you want to download an empty sheet?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+                            XLSX.writeFile(workbook, filename);
+                        }
+                    });
+                } else {
                     const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
                     XLSX.writeFile(workbook, filename);
                 }
-            });
-        } else {
-            const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
-            XLSX.writeFile(workbook, filename);
-        }
-    }
+            }
 
-    function exportToCSV() {
-        const table = document.getElementById("dataTable");
-        const rows = table.querySelectorAll("tbody tr");
+            function exportToCSV() {
+                const table = document.getElementById("dataTable");
+                const rows = table.querySelectorAll("tbody tr");
 
-        const username = document.getElementById('accountname').value || "All";
-        const environment = document.getElementById('environment').value || "Default";
-        const filename = username + "_" + environment + ".csv";
+                const username = document.getElementById('accountname').value || "All";
+                const environment = document.getElementById('environment').value || "Default";
+                const filename = username + "_" + environment + ".csv";
 
-        if (rows.length === 0) {
-            Swal.fire({
-                icon: 'question',
-                title: 'Empty Table',
-                text: 'The table is empty. Do you want to download an empty sheet?',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-            }).then((result) => {
-                if (result.isConfirmed) {
+                if (rows.length === 0) {
+                    Swal.fire({
+                        icon: 'question',
+                        title: 'Empty Table',
+                        text: 'The table is empty. Do you want to download an empty sheet?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const csvContent = getCSVContent(table);
+                            downloadCSV(csvContent, filename);
+                        }
+                    });
+                } else {
                     const csvContent = getCSVContent(table);
                     downloadCSV(csvContent, filename);
                 }
+            }
+
+            function getCSVContent(table) {
+                const rows = table.querySelectorAll("tr");
+                let csvContent = "";
+
+                rows.forEach(row => {
+                    const rowData = [];
+                    row.querySelectorAll("th, td").forEach(cell => {
+                        rowData.push(cell.innerText);
+                    });
+                    csvContent += rowData.join(",") + "\n";
+                });
+
+                return csvContent;
+            }
+
+            function downloadCSV(content, fileName) {
+                const blob = new Blob([content], {type: "text/csv;charset=utf-8;"});
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName;
+                link.click();
+            }
+
+            document.getElementById('dataForm').addEventListener('submit', getData);
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+                updateDisplayText('fromDateDisplay', fromDate);
+                updateDisplayText('toDateDisplay', toDate);
             });
-        } else {
-            const csvContent = getCSVContent(table);
-            downloadCSV(csvContent, filename);
-        }
-    }
-
-    function getCSVContent(table) {
-        const rows = table.querySelectorAll("tr");
-        let csvContent = "";
-
-        rows.forEach(row => {
-            const rowData = [];
-            row.querySelectorAll("th, td").forEach(cell => {
-                rowData.push(cell.innerText);
-            });
-            csvContent += rowData.join(",") + "\n";
-        });
-
-        return csvContent;
-    }
-
-    function downloadCSV(content, fileName) {
-        const blob = new Blob([content], {type: "text/csv;charset=utf-8;"});
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = fileName;
-        link.click();
-    }
-
-    document.getElementById('dataForm').addEventListener('submit', getData);
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const fromDate = document.getElementById('fromDate').value;
-        const toDate = document.getElementById('toDate').value;
-        updateDisplayText('fromDateDisplay', fromDate);
-        updateDisplayText('toDateDisplay', toDate);
-    });
-</script>
+        </script>
 
 
         <script>

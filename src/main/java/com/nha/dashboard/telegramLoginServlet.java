@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,9 +32,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-
-
-
 /**
  *
  * @author Admin
@@ -40,11 +39,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 @MultipartConfig
 public class telegramLoginServlet extends HttpServlet {
 
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -58,7 +56,6 @@ public class telegramLoginServlet extends HttpServlet {
         }
     }
 
- 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -79,7 +76,6 @@ public class telegramLoginServlet extends HttpServlet {
 
     }
 
-  
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -155,7 +151,7 @@ public class telegramLoginServlet extends HttpServlet {
             if (OtpInpt != null && OtpInpt.equals(Session_otp)) {
                 if ((username.equals(LogUsername))) {
                     session.setAttribute("LogUsername", LogUsername);
-                  out.println("Success");
+                    out.println("Success");
 
                 }
 
@@ -172,7 +168,7 @@ public class telegramLoginServlet extends HttpServlet {
                         chk = sendTelegramMsg(Session_otp, Logchat_id);
 
                     } else if (otpType != null && otpType.equals("email")) {
-                        chk = sendOtpMail(Session_otp, email);
+                        chk = sendOtpMail(Session_otp, email,LogUsername);
                     }
                     out.println(chk);
                 } catch (Exception e) {
@@ -267,12 +263,39 @@ public class telegramLoginServlet extends HttpServlet {
         return returnmsg;
     }
 
-    private String sendOtpMail(String Session_otp, String email) {
+    private String sendOtpMail(String Session_otp, String email,String LogUsername) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDateTime = sdf.format(new Date());
+//        String msg = "<html>"
+//                + "<body>"
+//                + "<p>Dear User,</p>"
+//                + "<p>Your Login OTP is: <strong>" + Session_otp + "</strong></p>"
+//                + "<p>This OTP was generated at <span style='font-weight:bold; color:#333;'>" + currentDateTime + "</span>.</p>"
+//                + "<p><strong>Important:</strong> This OTP is confidential. For your security, do not share it with anyone.</p>"
+//                + "</body>"
+//                + "</html>";
 
-        String msg = "Your  Login Otp is:" + Session_otp;
+        String msg = "<!DOCTYPE html>"
+                + "<html><head><meta charset='UTF-8'><title>Your OTP Code</title></head>"
+                + "<body style='font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px;'>"
+                + "<div style='background: #fff; padding: 20px; max-width: 400px; margin: auto; border-radius: 8px; "
+                + "box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);'>"
+                + "<h2>Your OTP Code for Login sms24hours</h2>"
+                + "<p>Hello <strong>"+LogUsername+"</strong>,</p>"
+                + "<p>Your One-Time Password (OTP) for <strong>cdr.sms24hours</strong> is:</p>"
+                + "<div id='otpBox' onclick='copyOTP()' "
+                + "style='font-size: 24px; font-weight: bold; color: #007bff; padding: 10px; "
+                + "border: 2px dashed #007bff; display: inline-block; margin: 15px 0; "
+                + "border-radius: 5px; cursor: pointer;'>"
+                + Session_otp + "</div>"
+                + "<p>This OTP was generated at <span style='font-weight:bold; color:#333;'>" + currentDateTime + "</span>.</p>"
+                + "<p>If you did not request this, please ignore this email.</p>"
+                + "<p><strong>Team sms24hours </strong></p>"
+                + "</div>"
+                + "</body></html>";
 
         SendAttachmentMail sm = new SendAttachmentMail();
-        boolean flag = sm.sendmail(email, "", "", "Otp", msg);
+        boolean flag = sm.sendmail(email, "", "", "OTP to Login sms24hours", msg);
         if (flag) {
             return "OTP Sent !!!";
         } else {

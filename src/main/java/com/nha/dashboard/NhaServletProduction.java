@@ -24,12 +24,32 @@ public class NhaServletProduction extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        dbcon db = new dbcon();
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-            dbcon db = new dbcon();
             JSONArray jsonArray = new JSONArray();
-            String sql = "SELECT     SUM(t1.Total) AS Total,     SUM(t1.Success) AS Success,     SUM(t1.Failed) AS Failed FROM User_Counts_Api t1 JOIN (    SELECT date, MAX(last_updated) AS max_last_updated     FROM User_Counts_Api_production     WHERE date = CURDATE()     GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated WHERE t1.date = CURDATE();";
+            String sql = "SELECT \n"
+                    + "    SUM(t1.Total) AS Total, \n"
+                    + "    SUM(t1.Success) AS Success, \n"
+                    + "    SUM(t1.Failed) AS Failed \n"
+                    + "FROM \n"
+                    + "    User_Counts_Api_production t1\n"
+                    + "JOIN \n"
+                    + "    (SELECT \n"
+                    + "        date, \n"
+                    + "        MAX(last_updated) AS max_last_updated \n"
+                    + "     FROM \n"
+                    + "        User_Counts_Api_production \n"
+                    + "     WHERE \n"
+                    + "        date = CURDATE() \n"
+                    + "     GROUP BY \n"
+                    + "        date) t2 \n"
+                    + "ON \n"
+                    + "    t1.date = t2.date \n"
+                    + "    AND t1.last_updated = t2.max_last_updated \n"
+                    + "WHERE \n"
+                    + "    t1.date = CURDATE();";
 
             db.getCon("nha_cdr");
             try (ResultSet rs = db.getResult(sql)) {
@@ -38,7 +58,7 @@ public class NhaServletProduction extends HttpServlet {
                     return;
                 }
 
-                while (rs.next()) {
+                while (rs.next()){
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("Total", rs.getObject("Total") != null ? rs.getInt("Total") : 0);
                     jsonObject.put("Success", rs.getObject("Success") != null ? rs.getInt("Success") : 0);
@@ -46,7 +66,7 @@ public class NhaServletProduction extends HttpServlet {
 
                     jsonArray.put(jsonObject);
                 }
-
+                System.out.println("jsonArray :" +jsonArray);
                 out.print(jsonArray.toString());
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -54,6 +74,8 @@ public class NhaServletProduction extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            db.closeConection();
         }
     }
 

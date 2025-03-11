@@ -20,6 +20,26 @@
         <servlet-name>NhaServletProduction</servlet-name>
         <servlet-class>com.nha.dashboard.NhaServletProduction</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>getAccountNameServlet</servlet-name>
+        <servlet-class>com.nha.dashboard.getAccountNameServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Total_Submitted_Count_Abdm</servlet-name>
+        <servlet-class>com.nha.dashboard.Total_Submitted_Count_Abdm</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Total_Submitted_Count_Admin</servlet-name>
+        <servlet-class>com.nha.dashboard.Total_Submitted_Count_Admin</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BiWeeklyReports</servlet-name>
+        <servlet-class>com.nha.dashboard.BiWeeklyReports</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>QuarterlyReports</servlet-name>
+        <servlet-class>com.nha.dashboard.QuarterlyReports</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login/*</url-pattern>
@@ -99,6 +119,26 @@
     <servlet-mapping>
         <servlet-name>NhaServletProduction</servlet-name>
         <url-pattern>/NhaServletProduction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getAccountNameServlet</servlet-name>
+        <url-pattern>/getAccountNameServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Total_Submitted_Count_Abdm</servlet-name>
+        <url-pattern>/Total_Submitted_Count_Abdm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Total_Submitted_Count_Admin</servlet-name>
+        <url-pattern>/Total_Submitted_Count_Admin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BiWeeklyReports</servlet-name>
+        <url-pattern>/BiWeeklyReports</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QuarterlyReports</servlet-name>
+        <url-pattern>/QuarterlyReports</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

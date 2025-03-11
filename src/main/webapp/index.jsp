@@ -42,7 +42,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>VNS | NHA</title>
 
- 
+
         <!-- Google Fonts -->
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -80,6 +80,44 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <style>
+
+
+            @media (min-width: 768px) {
+                .dropdown:hover .dropdown-menu {
+                    display: block;
+                    margin-top: 0;
+                }
+            }
+        
+            
+            
+            
+            .dropdown-menu {
+                position: absolute;
+                top: 100%;
+                left: 20px;
+                z-index: 1000;
+                display: none;
+                float: left;
+                min-width: 13rem;
+                padding: 0.5rem 0;
+                margin: 0.125rem 0 0;
+                font-size: 1rem;
+                color: #000000;
+                text-align: left;
+                list-style: none;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid #e0e0ef;
+                border-radius: 0.25rem;
+            }
+
+
+
+
+
+
+
             .logo-container {
                 display: flex;
                 align-items: center; /* Align elements vertically */
@@ -153,8 +191,8 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 position: fixed;
                 top: 0;
-                left: 250px; /* Shift header to the right by sidebar width */
-                width: calc(100% - 250px); /* Adjust width to account for sidebar */
+                left: 0px; /* Shift header to the right by sidebar width */
+                width: 100%; /* Adjust width to account for sidebar */
                 z-index: 999; /* Ensure header is below sidebar */
                 transition: left 0.3s ease;
             }
@@ -195,10 +233,10 @@
                 background-color: #2c3e50; /* Dark background color */
                 color: #ecf0f1; /* Light text color */
                 position: fixed; /* Fixed position */
-                top: 0;
+                top: 63px;
                 left: 0;
                 overflow-x: hidden; /* Hide horizontal scrollbar */
-                padding-top: 20px; /* Add some padding at the top */
+                padding-top: 0px; /* Add some padding at the top */
                 box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Add a shadow for depth */
             }
 
@@ -250,6 +288,36 @@
                 }
             }
 
+
+            .sidebar-nav .nav-link {
+                display: flex
+                    ;
+                align-items: center;
+                font-size: 15px;
+                font-weight: 500;
+                color: #000000 !important;
+                transition: 0.3;
+                background: #f6f9ff;
+                padding: 10px 15px;
+                border-radius: 2px;
+            }
+            .m_t-3 {
+                margin-top: 3px;
+            }
+            .m_t2-3 {
+                margin-top: 4px !important;
+            }
+            .left-logo {
+                float: left;
+                width: 93%;
+            }
+            #dataTable {
+                border: 1px solid #c9c4c4;
+            }
+            .m_t2-3 {
+                position: relative;
+                bottom: 7px;
+            }
         </style>
     </head>
     <%
@@ -266,23 +334,30 @@
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav">
                 <li class="nav-item mt-3">
-                    <a class="nav-link" href="Dashboard">Dashboard</a>
-                </li>
-                <li class="nav-item mt-3">
-                    <a class="nav-link" href="current">Current Day Reports</a>
-                </li>
-                <li class="nav-item mt-3">
-                    <a class="nav-link" href="previous">Previous Day Reports</a>
-                </li>
-                <li class="nav-item mt-3">
-                    <a class="nav-link" href="month">Month Wise Reports</a>
+                    <a class="nav-link" href="Dashboard">Dashboard</a> 
                 </li>
 
-                <li class="nav-item mt-3">
-                    <a href="Logout" class="btn btn-danger nav-link">Logout</a>
-                </li>
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reports
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                        <a class="nav-link" href="current">Current Day Reports</a>
+                        <a class="nav-link" href="previous">Previous Day Reports</a>
+                        <a class="nav-link" href="day"> Day Wise Reports</a>
+                        <a class="nav-link" href="weekly">Bi Weekly Reports</a>
+                        <a class="nav-link" href="month">Month Wise Reports</a>
+                        <a class="nav-link" href="quarterly">Quarterly Reports</a
+                    </div>   
+                <li class="nav-item">
+                    <a href="Logout" class="nav-link">Logout</a>
+                </li>
             </ul>
+
+
+
         </aside>
 
 
@@ -294,9 +369,11 @@
 
             <!-- Logo -->
             <div class="left-logo">
-                <img id="LoginLogoPage_1" src="https://app.virtuosorbm.com/assets/img/logo.png" style="width:60%;">
+                <img id="LoginLogoPage_1" src="https://app.virtuosorbm.com/assets/img/logo.png" style="width:10%;">
             </div>
-
+            <div class="right-logo">
+                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" alt="National Health Authority" class="nha-logo">
+            </div>
 
         </header>
 
@@ -305,8 +382,8 @@
             <!-- Logo and Title -->
             <div class="d-flex justify-content-between align-items-center mt-3 logo-container">
                 <h3 class="nha-title mx-auto">NHA Current Day Reports</h3> 
-                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" 
-                     alt="National Health Authority" class="nha-logo">
+                <!--                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" 
+                                     alt="National Health Authority" class="nha-logo">-->
             </div>
 
             <!-- Loader Overlay -->
@@ -328,18 +405,30 @@
             %>
             <section class="section dashboard mt-5">
                 <form id="dataForm" action="/action_page.php" method="POST">
-                    <div class="row">
+                    <div class="row mt-20">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
+                            <label for="environment">Reports</label>
+                            <select class="form-select mt-2" onchange="window.location.href = this.value;">
+                                <option value="current">Current Day Reports</option>
+                                <option value="previous">Previous Day Reports</option>
+                               
+                                <option value="BiWeekly.jsp">Bi Weekly Reports</option>
+                                <option value="month">Month Wise Reports</option>
+                                <option value="quarterly.jsp">Quarterly Reports</option>
+                            </select>
+                        </div>
                         <div class="col-md-3 col-sm-3 col-xs-12">
-                            <label for="environment">Environment</label>
-                            <select class="form-select mt-2" id="environment" name="environment">
-                                <option value="production">Production</option>
-                                <option value="sandbox">Sandbox</option>
+                            <label for="environment">Department</label>
+                            <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
+                                <option value="production">PMJAY</option>
+                                <option value="sandbox">ABDM</option>
                             </select>
                         </div>
                         <!-- Username Dropdown -->
-                        <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="accountname">Username</label>
                             <select class="form-select mt-2" id="accountname" name="accountname">
+                                <option value="All" selected>All</option>
                                 <%
                                     while (rs.next()) {
                                         String accountname = rs.getString("accountname");
@@ -352,15 +441,24 @@
                         </div>
 
                         <!-- From Date Input -->
-                        <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="fromDate">From</label>
-                            <input class="form-control mt-2" type="date" id="fromDate" name="fromDate" value="<%= currentDate%>" min="<%= currentDate%>" max="<%= currentDate%>">
+                            <input class="form-control mt-2"  type="date" id="fromDate" name="fromDate" value="<%= currentDate%>" min="<%= currentDate%>" max="<%= currentDate%>">
                         </div>
 
                         <!-- To Date Input -->
-                        <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="toDate">To</label>
                             <input class="form-control mt-2" type="date" id="toDate" name="toDate" value="<%= currentDate%>" min="<%= currentDate%>" max="<%= currentDate%>">
+                        </div>
+
+                        <div class="col-md-3 col-sm-3 col-xs-12 mt-3">
+                            <label for="groupBy3" class="m_t2-3">Group By:</label>
+                            <select class="form-control m_t-3" id="groupBy3" name="groupBy3">
+                                <option value="none">None</option>
+                                <option value="date">Date</option>
+                                <option value="account">Account</option>
+                            </select>
                         </div>
 
                         <!-- Submit and Export Buttons -->
@@ -385,12 +483,8 @@
                     <div class="col-md-12 text-center">
                         <table id="dataTable" class="table table-striped table-bordered" style="display: none;">
                             <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Username</th>
-                                    <th>Total</th>
-                                    <th>Success</th>
-                                    <th>Failed</th>
+                                <tr id="tableHeaders">
+                                    <!-- Headers will be updated based on groupBy3 -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -433,23 +527,74 @@
         <!-- Template Main JS File -->
 
 
+        <script>
+            function updateUsernames() {
+                var environment = document.getElementById("environment").value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "getAccountNameServlet?environment=" + environment, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        var usernames = JSON.parse(xhr.responseText);
+                        var accountnameDropdown = document.getElementById("accountname");
+
+                        // Clear any existing options in the dropdown
+                        accountnameDropdown.innerHTML = '';
+
+                        // Add the "All" option
+                        var allOption = document.createElement("option");
+                        allOption.value = "All";
+                        allOption.textContent = "All";
+                        accountnameDropdown.appendChild(allOption);
+
+                        // Add an initial default option if no usernames are returned
+                        if (usernames.length === 0) {
+                            var option = document.createElement("option");
+                            option.value = "";
+                            option.textContent = "No accounts available";
+                            accountnameDropdown.appendChild(option);
+                        } else {
+                            // Add each username as a new option
+                            usernames.forEach(function (username) {
+                                var option = document.createElement("option");
+                                option.value = username;
+                                option.textContent = username;
+                                accountnameDropdown.appendChild(option);
+                            });
+                        }
+                    }
+                };
+                xhr.send();
+            }
+
+            // Initial call to populate the username dropdown based on the default environment
+            updateUsernames();
+        </script>
+
+
+
+
 
         <script>
+
             function getData() {
                 // Show loader
                 document.getElementById('loader').style.display = 'block';
+
 
                 // Get form values
                 const accountname = document.getElementById('accountname').value;
                 const fromDate = document.getElementById('fromDate').value;
                 const toDate = document.getElementById('toDate').value;
                 const environment = document.getElementById('environment').value;
+                const groupBy3 = document.getElementById('groupBy3').value;
 
-                // Prepare the data as a simple URL-encoded string
+                // Prepare the data as a URL-encoded string
                 const data = 'accountname=' + encodeURIComponent(accountname) +
                         '&fromDate=' + encodeURIComponent(fromDate) +
                         '&toDate=' + encodeURIComponent(toDate) +
-                        "&environment=" + encodeURIComponent(environment);
+                        '&environment=' + encodeURIComponent(environment) +
+                        '&groupBy3=' + encodeURIComponent(groupBy3);
 
                 // Send AJAX request using fetch
                 fetch('NhaServlet', {
@@ -457,25 +602,24 @@
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: data // Send data as URL-encoded string
+                    body: data
                 })
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error('Network response was not ok');
                             }
-                            return response.json(); // Parse the JSON response
+                            return response.json();
                         })
                         .then(data => {
                             console.log("Response from servlet:", data);
                             if (data.length === 0) {
-                                // No records found
                                 Swal.fire({
                                     icon: 'info',
                                     title: 'No Records Found',
                                     text: 'No data was found for the given criteria.',
                                 });
                             } else {
-                                updateTable(data); // Update the table with the response data
+                                updateTable(data, groupBy3);
                             }
                             // Enable export buttons
                             document.getElementById('excelBtn').disabled = false;
@@ -497,35 +641,92 @@
 
             function updateTable(data) {
                 const tableBody = document.querySelector("#dataTable tbody");
+                const tableHeaders = document.querySelector("#dataTable thead tr");
+                const groupBy3 = document.getElementById('groupBy3').value;
                 tableBody.innerHTML = ""; // Clear existing table data
+                tableHeaders.innerHTML = ""; // Clear existing headers
+
+                // Update headers based on groupBy3
+                if (groupBy3 === "date") {
+                    tableHeaders.innerHTML =
+                            "<th>Date</th>" +
+                            "<th>Total</th>" +
+                            "<th>Success</th>" +
+                            "<th>Failed</th>";
+                } else if (groupBy3 === "account") {
+                    tableHeaders.innerHTML =
+                            "<th>Username</th>" +
+                            "<th>Total</th>" +
+                            "<th>Success</th>" +
+                            "<th>Failed</th>";
+                } else {
+                    tableHeaders.innerHTML =
+                            "<th>Date</th>" +
+                            "<th>Username</th>" +
+                            "<th>Total</th>" +
+                            "<th>Success</th>" +
+                            "<th>Failed</th>";
+                }
 
                 data.forEach(item => {
                     const row = document.createElement("tr");
 
-                    // Add Date cell
-                    const dateCell = document.createElement("td");
-                    dateCell.textContent = item.date; // Ensure 'date' is in the JSON response
-                    row.appendChild(dateCell);
+                    if (groupBy3 === "date") {
+                        // Show only Date, Total, Success, Failed
+                        const dateCell = document.createElement("td");
+                        dateCell.textContent = item.date;
+                        row.appendChild(dateCell);
 
-                    // Add Username cell
-                    const usernameCell = document.createElement("td");
-                    usernameCell.textContent = item.username;
-                    row.appendChild(usernameCell);
+                        const totalCell = document.createElement("td");
+                        totalCell.textContent = item.total;
+                        row.appendChild(totalCell);
 
-                    // Add Total cell
-                    const totalCell = document.createElement("td");
-                    totalCell.textContent = item.total;
-                    row.appendChild(totalCell);
+                        const successCell = document.createElement("td");
+                        successCell.textContent = item.success;
+                        row.appendChild(successCell);
 
-                    // Add Success cell
-                    const successCell = document.createElement("td");
-                    successCell.textContent = item.success;
-                    row.appendChild(successCell);
+                        const failedCell = document.createElement("td");
+                        failedCell.textContent = item.failed;
+                        row.appendChild(failedCell);
+                    } else if (groupBy3 === "account") {
+                        // Show only Username, Total, Success, Failed
+                        const usernameCell = document.createElement("td");
+                        usernameCell.textContent = item.username;
+                        row.appendChild(usernameCell);
 
-                    // Add Failed cell
-                    const failedCell = document.createElement("td");
-                    failedCell.textContent = item.failed;
-                    row.appendChild(failedCell);
+                        const totalCell = document.createElement("td");
+                        totalCell.textContent = item.total;
+                        row.appendChild(totalCell);
+
+                        const successCell = document.createElement("td");
+                        successCell.textContent = item.success;
+                        row.appendChild(successCell);
+
+                        const failedCell = document.createElement("td");
+                        failedCell.textContent = item.failed;
+                        row.appendChild(failedCell);
+                    } else {
+                        // Show all columns
+                        const dateCell = document.createElement("td");
+                        dateCell.textContent = item.date;
+                        row.appendChild(dateCell);
+
+                        const usernameCell = document.createElement("td");
+                        usernameCell.textContent = item.username;
+                        row.appendChild(usernameCell);
+
+                        const totalCell = document.createElement("td");
+                        totalCell.textContent = item.total;
+                        row.appendChild(totalCell);
+
+                        const successCell = document.createElement("td");
+                        successCell.textContent = item.success;
+                        row.appendChild(successCell);
+
+                        const failedCell = document.createElement("td");
+                        failedCell.textContent = item.failed;
+                        row.appendChild(failedCell);
+                    }
 
                     // Append the row to the table body
                     tableBody.appendChild(row);
@@ -534,6 +735,9 @@
                 // Show the table
                 document.getElementById('dataTable').style.display = 'table';
             }
+
+
+
 
             // Export to Excel
             function exportToExcel() {

@@ -91,7 +91,7 @@
                     margin-top: 0;
                 }
             }
-
+          
             .dropdown-menu {
                 position: absolute;
                 top: 100%;
@@ -318,6 +318,10 @@
     Previous Date: <%= getPreviousDay%>
 
     <body
+
+
+
+
         <!-- ======= Header ======= -->
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav">
@@ -334,10 +338,10 @@
 
                         <a class="nav-link" href="current">Current Day Reports</a>
                         <a class="nav-link" href="previous">Previous Day Reports</a>
-                        <a class="nav-link" href="day.jsp"> Day Wise Reports</a>
+                        <a class="nav-link" href="day"> Day Wise Reports</a>
                         <a class="nav-link" href="BiWeekly.jsp">Bi Weekly Reports</a>
                         <a class="nav-link" href="month">Month Wise Reports</a>
-                        <a class="nav-link" href="quarterly.jsp">Quarterly Reports</a
+                        <a class="nav-link" href="quarterly">Quarterly Reports</a
                     </div>   
                 <li class="nav-item">
                     <a href="Logout" class="nav-link">Logout</a>
@@ -368,7 +372,7 @@
         <main id="main" class="main">
             <!-- Logo and Title -->
             <div class="d-flex justify-content-between align-items-center mt-3 logo-container">
-                <h3 class="nha-title mx-auto">NHA Previous Day Wise Reports</h3> 
+                <h3 class="nha-title mx-auto">NHA Bi Weekly Reports</h3> 
                 <!--                <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" 
                                      alt="National Health Authority" class="nha-logo">-->
             </div>
@@ -393,23 +397,6 @@
             <section class="section dashboard mt-5">
                 <form id="dataForm">
                     <div class="row mt-20">
-
-                        <div class="col-md-3 col-sm-3 col-xs-12">
-                            <label for="environment">Reports</label>
-                            <select class="form-select mt-2" onchange="window.location.href = this.value;">
-                                <option value="previous">Previous Day Reports</option>
-                                <option value="current">Current Day Reports</option>
-                                
-
-                                <option value="BiWeekly.jsp">Bi Weekly Reports</option>
-                                <option value="month">Month Wise Reports</option>
-                                <option value="quarterly.jsp">Quarterly Reports</option>
-                            </select>
-                        </div>
-
-
-
-
 
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <label for="environment">Department</label>
@@ -448,7 +435,7 @@
                             <input class="form-control mt-2" type="date" id="toDate" name="toDate" value="<%= getPreviousDay%>" max="<%= getPreviousDay%>">
                         </div>
 
-                        <div class="col-md-3 col-sm-3 col-xs-12 mt-5">
+                        <div class="col-md-3 col-sm-3 col-xs-12 mt-2">
                             <label for="groupBy3" class="m_t2-3">Group By:</label>
                             <select class="form-control m_t-3" id="groupBy3" name="groupBy3">
                                 <option value="none">None</option>
