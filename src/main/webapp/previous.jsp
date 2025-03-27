@@ -17,9 +17,11 @@
     HttpSession s = request.getSession(false);
 
     String LogUsername = null;
+    String userType = null;
 
     if (s != null) {
         LogUsername = (String) s.getAttribute("LogUsername");
+        userType = (String) s.getAttribute("userType");
         System.out.println(LogUsername);
         if (LogUsername == null) {
             response.sendRedirect("Login");
@@ -214,6 +216,7 @@
                 margin-left: 250px; /* Shift main content to the right */
                 padding: 20px;
                 transition: margin-left 0.3s ease;
+
             }
 
             /* Footer */
@@ -235,8 +238,7 @@
                 color: #333333; /* Dark gray for better readability */
                 font-size: 16px; /* Comfortable font size */
                 font-weight: 500;
-
-
+                margin-top: 10px;
             }
 
 
@@ -325,20 +327,9 @@
                     <a class="nav-link" href="Dashboard">Dashboard</a> 
                 </li>
 
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Reports
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-
-                        <a class="nav-link" href="current">Current Day Reports</a>
-                        <a class="nav-link" href="previous">Previous Day Reports</a>
-                        <a class="nav-link" href="day.jsp"> Day Wise Reports</a>
-                        <a class="nav-link" href="BiWeekly.jsp">Bi Weekly Reports</a>
-                        <a class="nav-link" href="month">Month Wise Reports</a>
-                        <a class="nav-link" href="quarterly.jsp">Quarterly Reports</a
-                    </div>   
+                <li class="nav-item">
+                    <a href="current" class="nav-link">Reports</a>
+                </li>
                 <li class="nav-item">
                     <a href="Logout" class="nav-link">Logout</a>
                 </li>
@@ -387,7 +378,7 @@
                 try {
                     dbcon db = new dbcon();
                     db.getCon("nha_cdr");
-                    String sql = "SELECT accountname FROM AccountDetails WHERE Setup = '-1';";
+                    String sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = '" + userType + "';";
                     ResultSet rs = db.getResult(sql);
             %>
             <section class="section dashboard mt-5">
@@ -396,37 +387,47 @@
 
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <label for="environment">Reports</label>
-                            <select class="form-select mt-2" onchange="window.location.href = this.value;">
+                            <select class="form-select mt-2" id="ReportType" onchange="window.location.href = this.value;">
                                 <option value="previous">Previous Day Reports</option>
                                 <option value="current">Current Day Reports</option>
-                                
-
-                                <option value="BiWeekly.jsp">Bi Weekly Reports</option>
+                                <option value="BiWeekly">Bi Weekly Reports</option>
                                 <option value="month">Month Wise Reports</option>
-                                <option value="quarterly.jsp">Quarterly Reports</option>
+                                <option value="quarterly">Quarterly Reports</option>
                             </select>
                         </div>
 
-
-
-
-
+                        <!-- Username Dropdown -->
+                        <%
+                            if (userType != null && userType.equals("admin")) {
+                        %>
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <label for="environment">Department</label>
                             <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
-                                <option value="production">PMJAY</option>
-                                <option value="sandbox">ABDM</option>
+                                <option value="PMJAY">PMJAY</option>
+                                <option value="ABDM">ABDM</option>
                             </select>
-                        </div>  
+                        </div>
 
+                        <%
+                        } else {
+                        %>
+                        <div class="col-md-3 col-sm-3 col-xs-12" style="display: Block;">
+                            <label for="environment">Department</label>
+                            <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
+                                <option value="<%= userType%>"><%= userType%></option>
 
-                        <!-- Username Dropdown -->
+                            </select>
+                        </div>
+                        <%
+                            }
+
+                        %>
+
                         <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="accountname">Username</label>
                             <select class="form-select mt-2" id="accountname" name="accountname">
-                                <option value="All">All</option>
-                                <%
-                                    while (rs.next()) {
+                                <option value="All" selected>All</option>
+                                <%                                    while (rs.next()) {
                                         String accountname = rs.getString("accountname");
                                 %>
                                 <option value="<%= accountname%>"><%= accountname%></option>
@@ -435,6 +436,7 @@
                                 %>
                             </select>
                         </div>
+
 
                         <!-- From Date Input -->
                         <div class="col-md-2 col-sm-2 col-xs-12">
@@ -525,23 +527,19 @@
         <script>
             function updateUsernames() {
                 var environment = document.getElementById("environment").value;
-
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", "getAccountNameServlet?environment=" + environment, true);
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         var usernames = JSON.parse(xhr.responseText);
                         var accountnameDropdown = document.getElementById("accountname");
-
                         // Clear any existing options in the dropdown
                         accountnameDropdown.innerHTML = '';
-
                         // Add the "All" option
                         var allOption = document.createElement("option");
                         allOption.value = "All";
                         allOption.textContent = "All";
                         accountnameDropdown.appendChild(allOption);
-
                         // Add an initial default option if no usernames are returned
                         if (usernames.length === 0) {
                             var option = document.createElement("option");
@@ -588,20 +586,16 @@
         <script>
             function getData() {
                 document.getElementById('loader').style.display = 'block';
-
                 const accountname = document.getElementById('accountname').value;
                 const fromDate = document.getElementById('fromDate').value;
                 const toDate = document.getElementById('toDate').value;
                 const environment = document.getElementById('environment').value;
                 const groupBy3 = document.getElementById('groupBy3').value;
-
-
-
                 const data = "accountname=" + encodeURIComponent(accountname) +
                         "&fromDate=" + encodeURIComponent(fromDate) +
                         "&toDate=" + encodeURIComponent(toDate) +
                         "&environment=" + encodeURIComponent(environment) +
-                        "&groupBy3=" + encodeURIComponent(groupBy3);// Added environment
+                        "&groupBy3=" + encodeURIComponent(groupBy3); // Added environment
 
                 fetch('NhaServlet', {
                     method: 'POST',
@@ -669,72 +663,110 @@
                             "<th>Failed</th>";
                 }
 
+                let totalTotal = 0;
+                let totalSuccess = 0;
+                let totalFailed = 0;
+
                 data.forEach(item => {
                     const row = document.createElement("tr");
-
                     if (groupBy3 === "date") {
                         // Show only Date, Total, Success, Failed
                         const dateCell = document.createElement("td");
                         dateCell.textContent = item.date;
                         row.appendChild(dateCell);
-
                         const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
+                        totalCell.textContent = removeLeadingZeros(item.total);
                         row.appendChild(totalCell);
-
                         const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
+                        successCell.textContent = removeLeadingZeros(item.success);
                         row.appendChild(successCell);
-
                         const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
+                        failedCell.textContent = removeLeadingZeros(item.failed);
                         row.appendChild(failedCell);
                     } else if (groupBy3 === "account") {
                         // Show only Username, Total, Success, Failed
                         const usernameCell = document.createElement("td");
                         usernameCell.textContent = item.username;
                         row.appendChild(usernameCell);
-
                         const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
+                        totalCell.textContent = removeLeadingZeros(item.total);
                         row.appendChild(totalCell);
-
                         const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
+                        successCell.textContent = removeLeadingZeros(item.success);
                         row.appendChild(successCell);
-
                         const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
+                        failedCell.textContent = removeLeadingZeros(item.failed);
                         row.appendChild(failedCell);
                     } else {
                         // Show all columns
                         const dateCell = document.createElement("td");
                         dateCell.textContent = item.date;
                         row.appendChild(dateCell);
-
                         const usernameCell = document.createElement("td");
                         usernameCell.textContent = item.username;
                         row.appendChild(usernameCell);
-
                         const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
+                        totalCell.textContent = removeLeadingZeros(item.total);
                         row.appendChild(totalCell);
-
                         const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
+                        successCell.textContent = removeLeadingZeros(item.success);
                         row.appendChild(successCell);
-
                         const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
+                        failedCell.textContent = removeLeadingZeros(item.failed);
                         row.appendChild(failedCell);
                     }
+
+                    // Update totals
+                    totalTotal += parseInt(item.total, 10);
+                    totalSuccess += parseInt(item.success, 10);
+                    totalFailed += parseInt(item.failed, 10);
 
                     // Append the row to the table body
                     tableBody.appendChild(row);
                 });
 
+                // Add total row
+                const totalRow = document.createElement("tr");
+                totalRow.style.fontWeight = "bold";
+
+                if (groupBy3 === "date") {
+                    const totalLabelCell = document.createElement("td");
+                    totalLabelCell.textContent = "Total";
+                    totalLabelCell.colSpan = 1; // Merge the first column
+                    totalRow.appendChild(totalLabelCell);
+                } else if (groupBy3 === "account") {
+                    const totalLabelCell = document.createElement("td");
+                    totalLabelCell.textContent = "Total";
+                    totalLabelCell.colSpan = 1; // Merge the first column
+                    totalRow.appendChild(totalLabelCell);
+                } else {
+                    const totalLabelCell = document.createElement("td");
+                    totalLabelCell.textContent = "Total";
+                    totalLabelCell.colSpan = 2; // Merge the first two columns (Date and Username)
+                    totalRow.appendChild(totalLabelCell);
+                }
+
+                const totalCell = document.createElement("td");
+                totalCell.textContent = removeLeadingZeros(totalTotal.toString());
+                totalRow.appendChild(totalCell);
+
+                const successCell = document.createElement("td");
+                successCell.textContent = removeLeadingZeros(totalSuccess.toString());
+                totalRow.appendChild(successCell);
+
+                const failedCell = document.createElement("td");
+                failedCell.textContent = removeLeadingZeros(totalFailed.toString());
+                totalRow.appendChild(failedCell);
+
+                tableBody.appendChild(totalRow);
+
                 // Show the table
                 document.getElementById('dataTable').style.display = 'table';
+            }
+
+// Helper function to remove leading zeros
+            function removeLeadingZeros(value) {
+                return value.replace(/^0+/, '') || '0'; // Remove leading zeros, but keep '0' if the value is '0'
             }
 
             function getFileName(extension) {
@@ -747,7 +779,6 @@
             function exportToExcel() {
                 const table = document.getElementById("dataTable");
                 const rows = table.querySelectorAll("tbody tr");
-
                 if (rows.length === 0) {
                     Swal.fire({
                         icon: 'question',
@@ -771,7 +802,6 @@
             function exportToCSV() {
                 const table = document.getElementById("dataTable");
                 const rows = table.querySelectorAll("tbody tr");
-
                 if (rows.length === 0) {
                     Swal.fire({
                         icon: 'question',
@@ -795,7 +825,6 @@
             function getCSVContent(table) {
                 const rows = table.querySelectorAll("tr");
                 let csvContent = "";
-
                 rows.forEach(row => {
                     const rowData = [];
                     row.querySelectorAll("th, td").forEach(cell => {
@@ -803,7 +832,6 @@
                     });
                     csvContent += rowData.join(",") + "\n";
                 });
-
                 return csvContent;
             }
 
@@ -825,7 +853,6 @@
             document.addEventListener('DOMContentLoaded', function () {
                 // Select the logout button
                 const logoutButton = document.querySelector('a[href="Logout"]');
-
                 // Add click event listener to the logout button
                 logoutButton.addEventListener('click', function (event) {
                     event.preventDefault(); // Prevent the default link behavior

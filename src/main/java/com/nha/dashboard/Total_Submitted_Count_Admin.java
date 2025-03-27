@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.nha.dashboard;
 
 import db.dbcon;
@@ -43,36 +39,33 @@ public class Total_Submitted_Count_Admin extends HttpServlet {
         db.getCon("nha_cdr");
 
         try (PrintWriter out = response.getWriter()) {
-            // Get user type
-            String userType = "";
-            String sqlCheckUserType = "SELECT user_type FROM users WHERE username = '" + usernameFromSession + "'";
-            Statement stmt = db.getStmt();
-            ResultSet rsUserType = stmt.executeQuery(sqlCheckUserType);
-
-            if (rsUserType.next()) {
-                userType = rsUserType.getString("user_type");
-                System.out.println("User Type: " + userType);
+            // Get user type using direct SQL query with Statement
+            String userType = getUserType(db, usernameFromSession);
+            if (userType == null) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("{\"error\":\"User type not found.\"}");
+                return;
             }
-            rsUserType.close();
 
-            // Add separate total sums for each department
+            // Initialize sums for both departments
             long totalSumABDM = 0, successSumABDM = 0, failedSumABDM = 0, pendingSumABDM = 0;
             long totalSumPMJAY = 0, successSumPMJAY = 0, failedSumPMJAY = 0, pendingSumPMJAY = 0;
 
             JSONArray jsonArrayABDM = new JSONArray();
             JSONArray jsonArrayPMJAY = new JSONArray();
 
-            // Execute SQL query for 'ABDM' department
             if ("admin".equals(userType) || "ABDM".equals(userType) || "PMJAY".equals(userType)) {
-                String sqlABDM = "SELECT SUM(DISTINCT COALESCE(t1.Total, 0)) AS Total,SUM(DISTINCT COALESCE(t1.Success, 0)) AS Success ,SUM(t1.Failed) AS Failed    FROM sgc_billing t1 JOIN AccountDetails ad  ON ad.accountname = t1.Username where ad.department = 'ABDM';";
+
+                // Get data for 'ABDM' department
+                String sqlABDM = "SELECT       COALESCE(SUM(DISTINCT t1.Total), 0) + COALESCE(SUM(DISTINCT t2.Total), 0) AS Total_Sum,       COALESCE(SUM(DISTINCT t1.Success), 0) + COALESCE(SUM(DISTINCT t2.Success), 0) AS Success_Sum,       COALESCE(SUM(DISTINCT t1.Failed), 0) + COALESCE(SUM(DISTINCT t2.Failed), 0) AS Failed_Sum   FROM User_Counts_Api_production t1   LEFT\n"
+                        + "JOIN User_Counts_Api t2 ON t1.Username = t2.Username       AND t2.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api WHERE date = CURRENT_DATE)       AND t2.date = CURRENT_DATE   LEFT JOIN AccountDetails ad ON ad.accountname = t1.Username   WHERE ad.department = 'ABDM'   AND t1.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api_production WHERE date = CURRENT_DATE)   AND t1.date = CURRENT_DATE;";
 
                 ResultSet rsABDM = db.getResult(sqlABDM);
                 while (rsABDM != null && rsABDM.next()) {
-                    long total = rsABDM.getObject("Total") != null ? Math.max(rsABDM.getLong("Total"), 0) : 0;
-                    long success = rsABDM.getObject("Success") != null ? Math.max(rsABDM.getLong("Success"), 0) : 0;
-                    long failed = rsABDM.getObject("Failed") != null ? Math.max(rsABDM.getLong("Failed"), 0) : 0;
-                    long pending = total - (success + failed);
-                    pending = Math.max(pending, 0);
+                    long total = Math.max(rsABDM.getLong("Total_Sum"), 0);
+                    long success = Math.max(rsABDM.getLong("Success_Sum"), 0);
+                    long failed = Math.max(rsABDM.getLong("Failed_Sum"), 0);
+                    long pending = Math.max(total - (success + failed), 0);
 
                     totalSumABDM += total;
                     successSumABDM += success;
@@ -88,16 +81,16 @@ public class Total_Submitted_Count_Admin extends HttpServlet {
                     jsonArrayABDM.put(jsonObject);
                 }
 
-                // Execute SQL query for 'PMJAY' department
-                String sqlPMJAY = "SELECT SUM(DISTINCT COALESCE(t1.Total, 0)) AS Total,SUM(DISTINCT COALESCE(t1.Success, 0)) AS Success ,SUM(t1.Failed) AS Failed    FROM sgc_billing t1 JOIN AccountDetails ad  ON ad.accountname = t1.Username where ad.department = 'PMJAY';";
+                // Get data for 'PMJAY' department
+                String sqlPMJAY = "SELECT  COALESCE(SUM(DISTINCT t1.Total), 0) + COALESCE(SUM(DISTINCT t2.Total), 0) AS Total_Sum,       COALESCE(SUM(DISTINCT t1.Success), 0) + COALESCE(SUM(DISTINCT t2.Success), 0) AS Success_Sum,       COALESCE(SUM(DISTINCT t1.Failed), 0) + COALESCE(SUM(DISTINCT t2.Failed), 0) AS Failed_Sum   FROM User_Counts_Api_production t1   LEFT\n"
+                        + "JOIN User_Counts_Api t2 ON t1.Username = t2.Username       AND t2.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api WHERE date = CURRENT_DATE)       AND t2.date = CURRENT_DATE   LEFT JOIN AccountDetails ad ON ad.accountname = t1.Username   WHERE ad.department = 'pmjay'   AND t1.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api_production WHERE date = CURRENT_DATE)   AND t1.date = CURRENT_DATE;";
 
                 ResultSet rsPMJAY = db.getResult(sqlPMJAY);
                 while (rsPMJAY != null && rsPMJAY.next()) {
-                    long total = rsPMJAY.getObject("Total") != null ? Math.max(rsPMJAY.getLong("Total"), 0) : 0;
-                    long success = rsPMJAY.getObject("Success") != null ? Math.max(rsPMJAY.getLong("Success"), 0) : 0;
-                    long failed = rsPMJAY.getObject("Failed") != null ? Math.max(rsPMJAY.getLong("Failed"), 0) : 0;
-                    long pending = total - (success + failed);
-                    pending = Math.max(pending, 0);
+                    long total = Math.max(rsPMJAY.getLong("Total_Sum"), 0);
+                    long success = Math.max(rsPMJAY.getLong("Success_Sum"), 0);
+                    long failed = Math.max(rsPMJAY.getLong("Failed_Sum"), 0);
+                    long pending = Math.max(total - (success + failed), 0);
 
                     totalSumPMJAY += total;
                     successSumPMJAY += success;
@@ -114,10 +107,9 @@ public class Total_Submitted_Count_Admin extends HttpServlet {
                 }
             }
 
-            stmt.close();
             db.closeConection();
 
-            // Combine the total counts from both departments
+            // Combine totals
             long totalSumBoth = totalSumABDM + totalSumPMJAY;
             long successSumBoth = successSumABDM + successSumPMJAY;
             long failedSumBoth = failedSumABDM + failedSumPMJAY;
@@ -142,21 +134,14 @@ public class Total_Submitted_Count_Admin extends HttpServlet {
             totalCountsBoth.put("FailedSum", failedSumBoth);
             totalCountsBoth.put("PendingSum", pendingSumBoth);
 
-            // Create the final JSON response
-            // Create the final JSON response
+            // Prepare the final response JSON
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("ABDM", jsonArrayABDM);
             jsonResponse.put("PMJAY", jsonArrayPMJAY);
             jsonResponse.put("totalsABDM", totalCountsABDM);
             jsonResponse.put("totalsPMJAY", totalCountsPMJAY);
             jsonResponse.put("totalsBoth", totalCountsBoth);
-            jsonResponse.put("userType", userType); // Add userType here
-
-            // Output the final response
-            System.out.println("User Type: " + userType);
-            System.out.println("totalCounts ABDM: " + totalCountsABDM);
-            System.out.println("totalCounts PMJAY: " + totalCountsPMJAY);
-            System.out.println("totalCounts Both: " + totalCountsBoth);
+            jsonResponse.put("userType", userType);
 
             out.print(jsonResponse);  // Send response to the client
 
@@ -164,6 +149,18 @@ public class Total_Submitted_Count_Admin extends HttpServlet {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred.");
         }
+    }
+
+    private String getUserType(dbcon db, String username) throws SQLException {
+        String userType = null;
+        String sqlCheckUserType = "SELECT user_type FROM users WHERE username = '" + username + "'"; // Concatenating username directly
+        Statement stmt = db.getStmt();
+        ResultSet rsUserType = stmt.executeQuery(sqlCheckUserType);
+        if (rsUserType.next()) {
+            userType = rsUserType.getString("user_type");
+        }
+        rsUserType.close();
+        return userType;
     }
 
     @Override

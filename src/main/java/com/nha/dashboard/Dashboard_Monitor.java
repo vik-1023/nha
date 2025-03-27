@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.nha.dashboard;
 
 import db.dbcon;
@@ -68,125 +64,37 @@ public class Dashboard_Monitor extends HttpServlet {
 
             // Check user type and execute queries if authorized
             if ("admin".equals(userType)) {
-                String sql1 = "SELECT SUM(t1.Total) AS Total, SUM(t1.Success) AS Success, SUM(t1.Failed) AS Failed "
-                        + "FROM User_Counts_Api t1 "
-                        + "JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api "
-                        + "WHERE date = CURDATE() GROUP BY date) t2 "
-                        + "ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated "
-                        + "WHERE t1.date = CURDATE();";
 
-                String sql2 = "SELECT SUM(t1.Total) AS Total, SUM(t1.Success) AS Success, SUM(t1.Failed) AS Failed "
-                        + "FROM User_Counts_Api_production t1 "
-                        + "JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api_production "
-                        + "WHERE date = CURDATE() GROUP BY date) t2 "
-                        + "ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated "
-                        + "WHERE t1.date = CURDATE();";
-
-                System.out.println("Query 1: for sandbox" + sql1);
-                System.out.println("Query 2 for production: " + sql2);
-
-                total1 = executeQuery(db, sql1, "Total");
-                success1 = executeQuery(db, sql1, "Success");
-                total2 = executeQuery(db, sql2, "Total");
-                success2 = executeQuery(db, sql2, "Success");
-
+                total1 = executeQuery(db, "SELECT SUM(t1.Total) AS Total FROM User_Counts_Api t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated WHERE t1.date = CURDATE()", "Total");
+                success1 = executeQuery(db, "SELECT SUM(t1.Success) AS Success FROM User_Counts_Api t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated WHERE t1.date = CURDATE()", "Success");
+                total2 = executeQuery(db, "SELECT SUM(t1.Total) AS Total FROM User_Counts_Api_production t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api_production WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated WHERE t1.date = CURDATE()", "Total");
+                success2 = executeQuery(db, "SELECT SUM(t1.Success) AS Success FROM User_Counts_Api_production t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api_production WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated WHERE t1.date = CURDATE()", "Success");
+                System.out.println("total1 admin: " + total1 + " total2 : " + total2);
             } else if ("ABDM".equals(userType)) {
-
-                String sql1 = "SELECT \n"
-                        + "    SUM(COALESCE(t1.Total, 0)) AS Total, \n"
-                        + "    SUM(COALESCE(t1.Success, 0)) AS Success, \n"
-                        + "    SUM(COALESCE(t1.Failed, 0)) AS Failed\n"
-                        + "FROM User_Counts_Api t1\n"
-                        + "JOIN (\n"
-                        + "    SELECT date, MAX(last_updated) AS max_last_updated \n"
-                        + "    FROM User_Counts_Api \n"
-                        + "    WHERE date = CURDATE() \n"
-                        + "    GROUP BY date\n"
-                        + ") t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated\n"
-                        + "JOIN AccountDetails ad ON ad.accountname = t1.Username\n"
-                        + "WHERE t1.date = CURDATE() \n"
-                        + "AND ad.department = 'ABDM';";
-
-                String sql2 = "SELECT \n"
-                        + "    SUM(COALESCE(t1.Total, 0)) AS Total, \n"
-                        + "    SUM(COALESCE(t1.Success, 0)) AS Success, \n"
-                        + "    SUM(COALESCE(t1.Failed, 0)) AS Failed\n"
-                        + "FROM User_Counts_Api_production t1\n"
-                        + "JOIN (\n"
-                        + "    SELECT date, MAX(last_updated) AS max_last_updated \n"
-                        + "    FROM User_Counts_Api_production \n"
-                        + "    WHERE date = CURDATE() \n"
-                        + "    GROUP BY date\n"
-                        + ") t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated\n"
-                        + "JOIN AccountDetails ad ON ad.accountname = t1.Username\n"
-                        + "WHERE t1.date = CURDATE() \n"
-                        + "AND ad.department = 'ABDM';";
-
-                System.out.println("Query 1: for sandbox" + sql1);
-                System.out.println("Query 2 for production: " + sql2);
-
-                total1 = executeQuery(db, sql1, "Total");
-                success1 = executeQuery(db, sql1, "Success");
-                total2 = executeQuery(db, sql2, "Total");
-                success2 = executeQuery(db, sql2, "Success");
-
+                total1 = executeQuery(db, "SELECT SUM(t1.Total) AS Total_Sum FROM User_Counts_Api t1 JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = 'ABDM' AND t1.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api WHERE date = CURRENT_DATE) AND t1.date = CURRENT_DATE", "Total_Sum");
+                success1 = executeQuery(db, "SELECT SUM(t1.Success) AS Success_Sum FROM User_Counts_Api t1 JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = 'ABDM' AND t1.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api WHERE date = CURRENT_DATE) AND t1.date = CURRENT_DATE", "Success_Sum");
+                total2 = executeQuery(db, "SELECT SUM(t1.Total) AS Total_Sum FROM User_Counts_Api_production t1 JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = 'ABDM' ANd ad.environment='production' AND t1.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api_production WHERE date = CURRENT_DATE) AND t1.date = CURRENT_DATE", "Total_Sum");
+                success2 = executeQuery(db, "SELECT SUM(t1.Success) AS Success_Sum FROM User_Counts_Api_production t1 JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = 'ABDM' ANd ad.environment='production' AND t1.last_updated = (SELECT MAX(last_updated) FROM User_Counts_Api_production WHERE date = CURRENT_DATE) AND t1.date = CURRENT_DATE", "Success_Sum");
+                System.out.println("total1 ABDM: " + total1 + " total2 : " + total2);
+            } else if ("PMJAY".equals(userType)) {
+                total1 = executeQuery(db, "SELECT SUM(COALESCE(t1.Total, 0)) AS Total FROM User_Counts_Api t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE t1.date = CURDATE() AND ad.department = 'PMJAY' ANd ad.environment='sandbox'", "Total");
+                success1 = executeQuery(db, "SELECT SUM(COALESCE(t1.Success, 0)) AS Success FROM User_Counts_Api t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE t1.date = CURDATE() AND ad.department = 'PMJAY' ANd ad.environment='sandbox'", "Success");
+                total2 = executeQuery(db, "SELECT SUM(COALESCE(t1.Total, 0)) AS Total FROM User_Counts_Api_production t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api_production WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE t1.date = CURDATE() AND ad.department = 'PMJAY' ANd ad.environment='production'", "Total");
+                success2 = executeQuery(db, "SELECT SUM(COALESCE(t1.Success, 0)) AS Success FROM User_Counts_Api_production t1 JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM User_Counts_Api_production WHERE date = CURDATE() GROUP BY date) t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE t1.date = CURDATE() AND ad.department = 'PMJAY' ANd ad.environment='production'", "Success");
+                System.out.println("total1 PMJAY: " + total1 + " total2 : " + total2);
             }
 
-            
-            else if ("PMJAY".equals(userType)) {
+            System.out.println("total1: " + total1);
+            System.out.println("total2: " + total2);
+            System.out.println("success1: " + success1);
+            System.out.println("success2: " + success2);
 
-                String sql1 = "SELECT \n"
-                        + "    SUM(COALESCE(t1.Total, 0)) AS Total, \n"
-                        + "    SUM(COALESCE(t1.Success, 0)) AS Success, \n"
-                        + "    SUM(COALESCE(t1.Failed, 0)) AS Failed\n"
-                        + "FROM User_Counts_Api t1\n"
-                        + "JOIN (\n"
-                        + "    SELECT date, MAX(last_updated) AS max_last_updated \n"
-                        + "    FROM User_Counts_Api \n"
-                        + "    WHERE date = CURDATE() \n"
-                        + "    GROUP BY date\n"
-                        + ") t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated\n"
-                        + "JOIN AccountDetails ad ON ad.accountname = t1.Username\n"
-                        + "WHERE t1.date = CURDATE() \n"
-                        + "AND ad.department = 'PMJAY';";
-
-                String sql2 = "SELECT \n"
-                        + "    SUM(COALESCE(t1.Total, 0)) AS Total, \n"
-                        + "    SUM(COALESCE(t1.Success, 0)) AS Success, \n"
-                        + "    SUM(COALESCE(t1.Failed, 0)) AS Failed\n"
-                        + "FROM User_Counts_Api_production t1\n"
-                        + "JOIN (\n"
-                        + "    SELECT date, MAX(last_updated) AS max_last_updated \n"
-                        + "    FROM User_Counts_Api_production \n"
-                        + "    WHERE date = CURDATE() \n"
-                        + "    GROUP BY date\n"
-                        + ") t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated\n"
-                        + "JOIN AccountDetails ad ON ad.accountname = t1.Username\n"
-                        + "WHERE t1.date = CURDATE() \n"
-                        + "AND ad.department = 'PMJAY';";
-
-                System.out.println("Query 1: for sandbox" + sql1);
-                System.out.println("Query 2 for production: " + sql2);
-
-                total1 = executeQuery(db, sql1, "Total");
-                success1 = executeQuery(db, sql1, "Success");
-                total2 = executeQuery(db, sql2, "Total");
-                success2 = executeQuery(db, sql2, "Success");
-
-            }
-            
-            
-            
-            System.out.println("total1 :" + total1);
-            System.out.println("total2 :" + total2);
-
-            System.out.println("success1 :" + success1);
-            System.out.println("success2 :" + success2);
             // Sum the totals and successes
             int totalSum = total1 + total2;
             int successSum = success1 + success2;
-            System.out.println("totalSum :" + totalSum);
-            System.out.println("successSum :" + successSum);
+            System.out.println("totalSum: " + totalSum);
+            System.out.println("successSum: " + successSum);
+
             // Prepare JSON response
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Total", totalSum);

@@ -40,6 +40,18 @@
         <servlet-name>QuarterlyReports</servlet-name>
         <servlet-class>com.nha.dashboard.QuarterlyReports</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DepartmentWiseGraphServlet</servlet-name>
+        <servlet-class>com.nha.dashboard.DepartmentWiseGraphServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddUser</servlet-name>
+        <servlet-class>com.addUsersServlet.AddUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>addUserRecord</servlet-name>
+        <servlet-class>com.addUsersServlet.addUserRecord</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login/*</url-pattern>
@@ -83,6 +95,22 @@
     <servlet-mapping>
         <servlet-name>Logout</servlet-name>
         <url-pattern>/Logout/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>quarterly</servlet-name>
+        <jsp-file>/quarterly.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>quarterly</servlet-name>
+        <url-pattern>/quarterly/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>BiWeekly</servlet-name>
+        <jsp-file>/BiWeekly.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BiWeekly</servlet-name>
+        <url-pattern>/BiWeekly/*</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>NhaServletChart</servlet-name>
@@ -139,6 +167,18 @@
     <servlet-mapping>
         <servlet-name>QuarterlyReports</servlet-name>
         <url-pattern>/QuarterlyReports</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DepartmentWiseGraphServlet</servlet-name>
+        <url-pattern>/DepartmentWiseGraphServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddUser</servlet-name>
+        <url-pattern>/AddUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>addUserRecord</servlet-name>
+        <url-pattern>/addUserRecord</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

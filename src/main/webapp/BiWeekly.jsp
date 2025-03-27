@@ -43,6 +43,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
         <!-- Font Awesome for Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
         <style>
             /* General body styles */
             body {
@@ -76,7 +80,7 @@
             /* Container for the form and report */
             .container {
                 max-width: 1000px;
-                margin: 50px auto;
+                margin: 93px auto;
                 padding: 30px;
                 background-color: #ffffff;
                 border-radius: 12px;
@@ -103,13 +107,13 @@
             form {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 40px;
-                margin-bottom: 30px;
+                gap: 50px;
+
             }
 
             form > div {
                 flex: 1;
-                min-width: 200px;
+                min-width: 180px;
             }
 
             label {
@@ -134,6 +138,7 @@
             input[type="date"]:focus,
             select:focus {
                 border-color: #007bff;
+                color: var(--bs-body-color);
             }
 
             button {
@@ -146,6 +151,7 @@
                 border-radius: 6px;
                 cursor: pointer;
                 transition: background-color 0.3s ease, transform 0.2s ease;
+                margin-top: 25px;
             }
 
             button:hover {
@@ -165,7 +171,7 @@
 
             .download-buttons button {
                 margin-left: 10px;
-                background-color: #28a745;
+
                 padding: 10px 20px;
                 font-size: 14px;
                 font-weight: 500;
@@ -175,14 +181,9 @@
                 transition: background-color 0.3s ease, transform 0.2s ease;
             }
 
-            .download-buttons button:hover {
-                background-color: #218838;
-                transform: translateY(-2px);
-            }
 
-            .download-buttons button:active {
-                transform: translateY(0);
-            }
+
+
 
             /* Loading spinner */
             .spinner {
@@ -227,8 +228,8 @@
             }
 
             th {
-                background-color: #007bff;
-                color: #ffffff;
+
+                color: black;
                 font-weight: 600;
                 text-transform: uppercase;
                 font-size: 14px;
@@ -281,9 +282,125 @@
                     width: 100%;
                 }
             }
+
+
+
+            /* Sidebar Styles */
+            .sidebar {
+                width: 250px;
+                height: 100vh;
+                background-color: #2c3e50;
+                position: absolute;
+                top: 63px;
+                left: 0;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar-nav {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .sidebar-nav .nav-item {
+                padding: 3px 20px;
+            }
+
+            .sidebar-nav .nav-link {
+                text-decoration: none;
+                font-size: 16px;
+                display: block;
+                color: #000000;
+                background-color: #fff;
+                border-radius: 2px;
+                padding:10px;
+            }
+
+            .sidebar-nav .nav-link:hover {
+                background-color: #fff;
+                color:#000;
+            }
+
+            .dropdown-menu {
+                position: absolute;
+                top: 100%;
+                left: 20px;
+                z-index: 1000;
+                display: none;
+                float: left;
+                min-width: 13rem;
+                padding: 0.5rem 0;
+                margin: 0.125rem 0 0;
+                font-size: 1rem;
+                color: #000000;
+                text-align: left;
+                list-style: none;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid #e0e0ef;
+                border-radius: 0.25rem;
+            }
+
+
+            #main, #footer {
+                margin-left: 251px;
+                background-color: #e9e9e9;
+            }
+            #main {
+                margin-top: 60px;
+                padding: 20px 30px;
+                transition: all 0.3s;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 30px;
+                box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            th {
+                background-color: #007bff00;
+                color: #000000;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 14px;
+            }
+            .rept {
+                gap: 0px;
+            }
+            .subm {
+                margin-top: 0;
+                padding: 10px 14px;
+                background-color: #198754;
+                color: #fff;
+                font-size: 14px;
+                margin-top:20px;
+            }
+            .subm:hover {
+                background-color: #198754;
+                color: #fff;
+            }
         </style>
     </head>
     <body>
+
+        <aside id="sidebar" class="sidebar" style=" position: fixed;">
+            <ul class="sidebar-nav">
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="Dashboard">Dashboard</a> 
+                </li>
+
+                <li class="nav-item">
+                    <a href="current" class="nav-link">Reports</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="Logout" class="nav-link">Logout</a>
+                </li>
+            </ul>
+        </aside>
         <header id="header" class="header fixed-top d-flex align-items-center">
             <!-- Menu Icon (Visible only on smaller screens) -->
             <div class="menu-icon d-block d-md-none" onclick="toggleSidebar()">
@@ -299,51 +416,47 @@
             </div>
 
         </header>
-        <div class="container" style="margin-top: 50px;">
-            <h2> Bi-Weekly Report</h2>
-
+        <main class="main" id="main">
+            <h2 style="color: #333;"> Bi-Weekly Report</h2>
             <!-- Form to select start and end dates, and group by -->
-            <form id="reportForm">
-                <div>
+            <form id="reportForm" class="rept">
+                <div class="col-md-3 col-sm-3 col-xs-12">
                     <label for="environment">Reports</label>
                     <select class="form-select" onchange="window.location.href = this.value;" style="width: 200px;">
-                        <option value="BiWeekly.jsp">Bi Weekly Reports</option>
+                        <option value="BiWeekly">Bi Weekly Reports</option>
                         <option value="current">Current Day Reports</option>
                         <option value="previous">Previous Day Reports</option>
 
                         <option value="month">Month Wise Reports</option>
-                        <option value="quarterly.jsp">Quarterly Reports</option>
+                        <option value="quarterly">Quarterly Reports</option>
                     </select>
                 </div>
-
-                <div>
+                <div class="col-md-3 col-sm-3 col-xs-12">
                     <label for="startDate">Start Date:</label>
                     <input type="date" id="startDate" name="startDate" required style="width: 200px;">
                 </div>
-
-                <div>
+                <div class="col-md-3 col-sm-3 col-xs-12">
                     <label for="endDate">End Date:</label>
                     <input type="date" id="endDate" name="endDate" required style="width: 200px;">
                 </div>
 
-                <div>
+                <div class="col-md-3 col-sm-3 col-xs-12">
                     <label for="groupBy">Group By:</label>
-                    <select id="groupBy" name="groupBy" required style="width: 200px;">
+                    <select id="groupBy" name="groupBy" required >
                         <option value="none">None</option>
                         <option value="username">Username</option>
                         <option value="biweeklyPeriod">Biweekly Period</option>
                     </select>
                 </div>
-
-                <div>
-                    <button type="submit">Submit</button>
+                <div class="col-md-2 col-sm-2 col-xs-12">
+                    <button class="subm" type="submit">Submit</button>
                 </div>
             </form>
 
             <!-- Download Buttons -->
             <div class="download-buttons">
-                <button id="exportExcel"><i class="fas fa-file-excel"></i> Export to Excel</button>
-                <button id="exportCSV"><i class="fas fa-file-csv"></i> Export to CSV</button>
+                <button id="exportExcel" class="btn btn-primary"><i class="fas fa-file-excel"></i> Export to Excel</button>
+                <button id="exportCSV" class="btn btn-secondary"><i class="fas fa-file-csv"></i> Export to CSV</button>
             </div>
 
             <!-- Loading Spinner -->
@@ -369,151 +482,182 @@
                     <!-- Data will be dynamically inserted here by AJAX -->
                 </tbody>
             </table>
-        </div>
+        </main>
 
-        <script>
-            $(document).ready(function () {
-                // Function to format date as YYYY-MM-DD
-                function formatDate(date) {
-                    var d = new Date(date),
-                            month = '' + (d.getMonth() + 1),
-                            day = '' + d.getDate(),
-                            year = d.getFullYear();
+      <script>
+    $(document).ready(function () {
+        // Function to format date as YYYY-MM-DD
+        function formatDate(date) {
+            var d = new Date(date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
 
-                    if (month.length < 2)
-                        month = '0' + month;
-                    if (day.length < 2)
-                        day = '0' + day;
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
 
-                    return [year, month, day].join('-');
-                }
+            return [year, month, day].join('-');
+        }
 
-                // Set default dates (bi-weekly: 14 days before today)
-                var today = new Date();
-                var endDate = formatDate(today); // Today's date
-                var startDate = formatDate(new Date(today.setDate(today.getDate() - 14))); // 14 days before today
+        // Set default dates (bi-weekly: 14 days before today)
+        var today = new Date();
+        var endDate = formatDate(today); // Today's date
+        var startDate = formatDate(new Date(today.setDate(today.getDate() - 14))); // 14 days before today
+        console.log("Start Date: ", startDate);
+console.log("End Date: ", endDate);
 
-                // Set the default values in the date inputs
-                $("#startDate").val(startDate);
-                $("#endDate").val(endDate);
+        // Set the default values in the date inputs
+        $("#startDate").val(startDate);
+        $("#endDate").val(endDate);
 
-                // AJAX request when the form is submitted
-                $("#reportForm").on("submit", function (event) {
-                    event.preventDefault(); // Prevent the form from submitting normally
+        $("#reportForm").on("submit", function (event) {
+            event.preventDefault(); // Prevent the form from submitting normally
 
-                    // Get the form values (start and end date, group by option)
-                    var startDate = $("#startDate").val();
-                    var endDate = $("#endDate").val();
-                    var groupBy = $("#groupBy").val(); // Get selected group by option
+            // Get the form values (start and end date, group by option)
+            var startDate = $("#startDate").val();
+            var endDate = $("#endDate").val();
+            var groupBy = $("#groupBy").val(); // Get selected group by option
 
-                    // Show loading spinner
-                    $('#spinner').show();
+            // Show loading spinner
+            $('#spinner').show();
 
-                    // Hide error message and clear previous table data
-                    $('#errorMessage').text('');
-                    $('#reportTable tbody').empty();
+            // Hide error message and clear previous table data
+            $('#errorMessage').text('');
+            $('#reportTable tbody').empty();
 
-                    // Send AJAX request to the servlet
-                    $.ajax({
-                        url: 'BiWeeklyReports', // Servlet URL
-                        type: 'GET',
-                        data: {
-                            startDate: startDate,
-                            endDate: endDate,
-                            groupBy: groupBy  // Send the group by option
-                        },
-                        success: function (response) {
-                            // Hide loading spinner
-                            $('#spinner').hide();
+            // Send AJAX request to the servlet
+            $.ajax({
+                url: 'BiWeeklyReports', // Servlet URL
+                type: 'GET',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    groupBy: groupBy  // Send the group by option
+                },
+                dataType: 'json', // Expect JSON response
+                success: function (response) {
+                    // Hide loading spinner
+                    $('#spinner').hide();
 
-                            // Check if the response is an array
-                            if (Array.isArray(response)) {
-                                // Adjust the table headers and data rows based on the groupBy selection
-                                if (groupBy === "none") {
-                                    $('#usernameColumn').show();
-                                    $('#biweeklyPeriodColumn').show();
-                                } else if (groupBy === "username") {
-                                    $('#usernameColumn').show();
-                                    $('#biweeklyPeriodColumn').hide();
-                                } else if (groupBy === "biweeklyPeriod") {
-                                    $('#usernameColumn').hide();
-                                    $('#biweeklyPeriodColumn').show();
-                                }
+                    // Check if the response is an array
+                    if (Array.isArray(response)) {
+                        // Show the table after data is loaded
+                        $('#reportTable').show();
 
-                                // Insert data into the table dynamically
-                                response.forEach(function (row) {
-                                    var tr = "<tr>";
-
-                                    // Handle different groupBy cases for username and biweekly period columns
-                                    if (groupBy === "none" || groupBy === "username") {
-                                        tr += "<td>" + row.Username + "</td>";
-                                    }
-
-                                    if (groupBy === "none" || groupBy === "biweeklyPeriod") {
-                                        tr += "<td>" + row.Biweekly_Period + "</td>";
-                                    }
-
-                                    // Add Total and Success columns for all cases
-                                    tr += "<td>" + row.Total + "</td>" +
-                                            "<td>" + row.Success + "</td>" +
-                                            "</tr>";
-
-                                    $("#reportTable tbody").append(tr);
-                                });
-                            } else {
-                                alert("Invalid response format. Expected an array.");
-                            }
-                        },
-                        error: function () {
-                            // Hide loading spinner
-                            $('#spinner').hide();
-
-                            // Show error message
-                            $('#errorMessage').text('An error occurred while fetching the data.');
+                        // Adjust the table headers and data rows based on the groupBy selection
+                        if (groupBy === "none") {
+                            $('#usernameColumn').show();
+                            $('#biweeklyPeriodColumn').show();
+                        } else if (groupBy === "username") {
+                            $('#usernameColumn').show();
+                            $('#biweeklyPeriodColumn').hide();
+                        } else if (groupBy === "biweeklyPeriod") {
+                            $('#usernameColumn').hide();
+                            $('#biweeklyPeriodColumn').show();
                         }
-                    });
-                });
 
-                // Function to export table data to Excel
-                $('#exportExcel').on('click', function () {
-                    var table = document.getElementById('reportTable');
-                    var workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
-                    XLSX.writeFile(workbook, 'BiWeeklyReport.xlsx');
-                });
+                        // Variables to calculate totals
+                        let totalTotal = 0;
+                        let totalSuccess = 0;
 
-                // Function to export table data to CSV
-                $('#exportCSV').on('click', function () {
-                    var table = document.getElementById('reportTable');
-                    var rows = table.querySelectorAll('tr');
-                    var csv = [];
+                        // Insert data into the table dynamically
+                        response.forEach(function (row) {
+                            var tr = "<tr>";
 
-                    // Extract headers
-                    var headers = [];
-                    table.querySelectorAll('th').forEach(function (th) {
-                        headers.push(th.innerText);
-                    });
-                    csv.push(headers.join(','));
+                            // Handle different groupBy cases for username and biweekly period columns
+                            if (groupBy === "none" || groupBy === "username") {
+                                tr += "<td>" + row.Username + "</td>";
+                            }
 
-                    // Extract rows
-                    rows.forEach(function (row) {
-                        var rowData = [];
-                        row.querySelectorAll('td').forEach(function (td) {
-                            rowData.push(td.innerText);
+                            if (groupBy === "none" || groupBy === "biweeklyPeriod") {
+                                tr += "<td>" + row.Biweekly_Period + "</td>";
+                            }
+
+                            // Add Total and Success columns for all cases
+                            tr += "<td>" + row.Total + "</td>" +
+                                    "<td>" + row.Success + "</td>" +
+                                    "</tr>";
+
+                            $("#reportTable tbody").append(tr);
+
+                            // Update totals
+                            totalTotal += parseInt(row.Total, 10);
+                            totalSuccess += parseInt(row.Success, 10);
                         });
-                        csv.push(rowData.join(','));
-                    });
 
-                    // Create CSV file
-                    var csvContent = "data:text/csv;charset=utf-8," + csv.join('\n');
-                    var encodedUri = encodeURI(csvContent);
-                    var link = document.createElement('a');
-                    link.setAttribute('href', encodedUri);
-                    link.setAttribute('download', 'BiWeeklyReport.csv');
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                });
+                        // Add the total row
+                        var totalRow = "<tr style='font-weight: bold;'>";
+
+                        // Merge the username and biweekly period columns for the total row
+                        if (groupBy === "none") {
+                            totalRow += "<td colspan='2'>Total</td>"; // Merge two columns
+                        } else if (groupBy === "username" || groupBy === "biweeklyPeriod") {
+                            totalRow += "<td>Total</td>"; // Merge one column
+                        }
+
+                        // Add the total values
+                        totalRow += "<td>" + totalTotal + "</td>" +
+                                "<td>" + totalSuccess + "</td>" +
+                                "</tr>";
+
+                        $("#reportTable tbody").append(totalRow);
+                    } else {
+                        $('#errorMessage').text('Invalid response format. Expected an array.');
+                    }
+                },
+                error: function () {
+                    // Hide loading spinner
+                    $('#spinner').hide();
+
+                    // Show error message
+                    $('#errorMessage').text('An error occurred while fetching the data.');
+                }
             });
-        </script>
+        });
+
+        // Function to export table data to Excel
+        $('#exportExcel').on('click', function () {
+            var table = document.getElementById('reportTable');
+            var workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+            XLSX.writeFile(workbook, 'BiWeeklyReport.xlsx');
+        });
+
+        // Function to export table data to CSV
+        $('#exportCSV').on('click', function () {
+            var table = document.getElementById('reportTable');
+            var rows = table.querySelectorAll('tr');
+            var csv = [];
+
+            // Extract headers
+            var headers = [];
+            table.querySelectorAll('th').forEach(function (th) {
+                headers.push(th.innerText);
+            });
+            csv.push(headers.join(','));
+
+            // Extract rows
+            rows.forEach(function (row) {
+                var rowData = [];
+                row.querySelectorAll('td').forEach(function (td) {
+                    rowData.push(td.innerText);
+                });
+                csv.push(rowData.join(','));
+            });
+
+            // Create CSV file
+            var csvContent = "data:text/csv;charset=utf-8," + csv.join('\n');
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'BiWeeklyReport.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    });
+</script>
+
     </body>
 </html>

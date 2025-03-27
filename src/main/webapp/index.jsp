@@ -17,9 +17,11 @@
     HttpSession s = request.getSession(false);
 
     String LogUsername = null;
+    String userType = null;
 
     if (s != null) {
         LogUsername = (String) s.getAttribute("LogUsername");
+        userType = (String) s.getAttribute("userType");
         System.out.println(LogUsername);
         if (LogUsername == null) {
             response.sendRedirect("Login");
@@ -30,9 +32,6 @@
         return;
     }
 %>
-
-
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -80,18 +79,12 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <style>
-
-
             @media (min-width: 768px) {
                 .dropdown:hover .dropdown-menu {
                     display: block;
                     margin-top: 0;
                 }
             }
-        
-            
-            
-            
             .dropdown-menu {
                 position: absolute;
                 top: 100%;
@@ -111,12 +104,6 @@
                 border: 1px solid #e0e0ef;
                 border-radius: 0.25rem;
             }
-
-
-
-
-
-
 
             .logo-container {
                 display: flex;
@@ -138,10 +125,6 @@
                 width: 180px; /* Adjust logo size */
                 height: auto;
             }
-
-
-
-
 
             .loader {
                 position: fixed; /* Fixed position to center it on the screen */
@@ -326,47 +309,27 @@
         String currentDate = sdf.format(new java.util.Date());
     %>
     <body
-
-
-
-
         <!-- ======= Header ======= -->
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav">
                 <li class="nav-item mt-3">
                     <a class="nav-link" href="Dashboard">Dashboard</a> 
                 </li>
+                <li class="nav-item">
+                    <a href="current" class="nav-link">Reports</a>
+                </li>
 
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Reports
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-
-                        <a class="nav-link" href="current">Current Day Reports</a>
-                        <a class="nav-link" href="previous">Previous Day Reports</a>
-                        <a class="nav-link" href="day"> Day Wise Reports</a>
-                        <a class="nav-link" href="weekly">Bi Weekly Reports</a>
-                        <a class="nav-link" href="month">Month Wise Reports</a>
-                        <a class="nav-link" href="quarterly">Quarterly Reports</a
-                    </div>   
                 <li class="nav-item">
                     <a href="Logout" class="nav-link">Logout</a>
                 </li>
             </ul>
-
-
-
         </aside>
-
-
         <header id="header" class="header fixed-top d-flex align-items-center">
             <!-- Menu Icon (Visible only on smaller screens) -->
             <div class="menu-icon d-block d-md-none" onclick="toggleSidebar()">
                 <i class="bi bi-list"></i> <!-- Use any icon library like Bootstrap Icons -->
             </div>
-
             <!-- Logo -->
             <div class="left-logo">
                 <img id="LoginLogoPage_1" src="https://app.virtuosorbm.com/assets/img/logo.png" style="width:10%;">
@@ -374,10 +337,7 @@
             <div class="right-logo">
                 <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" alt="National Health Authority" class="nha-logo">
             </div>
-
         </header>
-
-
         <main id="main" class="main">
             <!-- Logo and Title -->
             <div class="d-flex justify-content-between align-items-center mt-3 logo-container">
@@ -400,30 +360,46 @@
                 try {
                     dbcon db = new dbcon();
                     db.getCon("nha_cdr");
-                    String sql = "SELECT accountname FROM AccountDetails WHERE Setup = '-1';";
+                    String sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = '" + userType + "';";
                     ResultSet rs = db.getResult(sql);
             %>
             <section class="section dashboard mt-5">
                 <form id="dataForm" action="/action_page.php" method="POST">
                     <div class="row mt-20">
-                            <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
                             <label for="environment">Reports</label>
                             <select class="form-select mt-2" onchange="window.location.href = this.value;">
                                 <option value="current">Current Day Reports</option>
                                 <option value="previous">Previous Day Reports</option>
-                               
-                                <option value="BiWeekly.jsp">Bi Weekly Reports</option>
+
+                                <option value="BiWeekly">Bi Weekly Reports</option>
                                 <option value="month">Month Wise Reports</option>
-                                <option value="quarterly.jsp">Quarterly Reports</option>
+                                <option value="quarterly">Quarterly Reports</option>
                             </select>
                         </div>
+                        <%
+                            // Check if userType is not null and if it equals "Admin"
+                            if (userType != null && userType.equals("admin")) {
+                        %>
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <label for="environment">Department</label>
                             <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
-                                <option value="production">PMJAY</option>
-                                <option value="sandbox">ABDM</option>
+                                <option value="PMJAY">PMJAY</option>
+                                <option value="ABDM">ABDM</option>
                             </select>
                         </div>
+                        <%
+                        } else {
+                        %>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <label for="environment">Department</label>
+                            <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
+                                <option value="<%= userType%>"><%= userType%></option>
+                            </select>
+                        </div>
+                        <%
+                            }
+                        %>
                         <!-- Username Dropdown -->
                         <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="accountname">Username</label>
@@ -451,7 +427,6 @@
                             <label for="toDate">To</label>
                             <input class="form-control mt-2" type="date" id="toDate" name="toDate" value="<%= currentDate%>" min="<%= currentDate%>" max="<%= currentDate%>">
                         </div>
-
                         <div class="col-md-3 col-sm-3 col-xs-12 mt-3">
                             <label for="groupBy3" class="m_t2-3">Group By:</label>
                             <select class="form-control m_t-3" id="groupBy3" name="groupBy3">
@@ -477,7 +452,6 @@
                         </div>
                     </div>
                 </form>
-
                 <!-- Table to display data -->
                 <div class="row mt-4">
                     <div class="col-md-12 text-center">
@@ -507,7 +481,6 @@
                 }
             %>
         </main>
-
         <div id="loader" class="loader" style="display: none;">
             <div class="spinner-border text-primary " role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -520,13 +493,7 @@
             </div>
 
         </footer><!-- End Footer -->
-
         <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-
-        <!-- Template Main JS File -->
-
-
         <script>
             function updateUsernames() {
                 var environment = document.getElementById("environment").value;
@@ -570,33 +537,22 @@
             // Initial call to populate the username dropdown based on the default environment
             updateUsernames();
         </script>
-
-
-
-
-
         <script>
-
             function getData() {
-                // Show loader
                 document.getElementById('loader').style.display = 'block';
 
-
-                // Get form values
                 const accountname = document.getElementById('accountname').value;
                 const fromDate = document.getElementById('fromDate').value;
                 const toDate = document.getElementById('toDate').value;
                 const environment = document.getElementById('environment').value;
                 const groupBy3 = document.getElementById('groupBy3').value;
 
-                // Prepare the data as a URL-encoded string
                 const data = 'accountname=' + encodeURIComponent(accountname) +
                         '&fromDate=' + encodeURIComponent(fromDate) +
                         '&toDate=' + encodeURIComponent(toDate) +
                         '&environment=' + encodeURIComponent(environment) +
                         '&groupBy3=' + encodeURIComponent(groupBy3);
 
-                // Send AJAX request using fetch
                 fetch('NhaServlet', {
                     method: 'POST',
                     headers: {
@@ -621,7 +577,6 @@
                             } else {
                                 updateTable(data, groupBy3);
                             }
-                            // Enable export buttons
                             document.getElementById('excelBtn').disabled = false;
                             document.getElementById('csvBtn').disabled = false;
                         })
@@ -634,19 +589,20 @@
                             });
                         })
                         .finally(() => {
-                            // Hide loader after completion
                             document.getElementById('loader').style.display = 'none';
                         });
             }
 
-            function updateTable(data) {
+            function updateTable(data, groupBy3) {
                 const tableBody = document.querySelector("#dataTable tbody");
                 const tableHeaders = document.querySelector("#dataTable thead tr");
-                const groupBy3 = document.getElementById('groupBy3').value;
-                tableBody.innerHTML = ""; // Clear existing table data
-                tableHeaders.innerHTML = ""; // Clear existing headers
+                tableBody.innerHTML = "";
+                tableHeaders.innerHTML = "";
 
-                // Update headers based on groupBy3
+                let totalSum = 0;
+                let successSum = 0;
+                let failedSum = 0;
+
                 if (groupBy3 === "date") {
                     tableHeaders.innerHTML =
                             "<th>Date</th>" +
@@ -672,131 +628,80 @@
                     const row = document.createElement("tr");
 
                     if (groupBy3 === "date") {
-                        // Show only Date, Total, Success, Failed
-                        const dateCell = document.createElement("td");
-                        dateCell.textContent = item.date;
-                        row.appendChild(dateCell);
-
-                        const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
-                        row.appendChild(totalCell);
-
-                        const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
-                        row.appendChild(successCell);
-
-                        const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
-                        row.appendChild(failedCell);
+                        appendCell(row, item.date);
+                        appendCell(row, item.total);
+                        appendCell(row, item.success);
+                        appendCell(row, item.failed);
                     } else if (groupBy3 === "account") {
-                        // Show only Username, Total, Success, Failed
-                        const usernameCell = document.createElement("td");
-                        usernameCell.textContent = item.username;
-                        row.appendChild(usernameCell);
-
-                        const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
-                        row.appendChild(totalCell);
-
-                        const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
-                        row.appendChild(successCell);
-
-                        const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
-                        row.appendChild(failedCell);
+                        appendCell(row, item.username);
+                        appendCell(row, item.total);
+                        appendCell(row, item.success);
+                        appendCell(row, item.failed);
                     } else {
-                        // Show all columns
-                        const dateCell = document.createElement("td");
-                        dateCell.textContent = item.date;
-                        row.appendChild(dateCell);
-
-                        const usernameCell = document.createElement("td");
-                        usernameCell.textContent = item.username;
-                        row.appendChild(usernameCell);
-
-                        const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
-                        row.appendChild(totalCell);
-
-                        const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
-                        row.appendChild(successCell);
-
-                        const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
-                        row.appendChild(failedCell);
+                        appendCell(row, item.date);
+                        appendCell(row, item.username);
+                        appendCell(row, item.total);
+                        appendCell(row, item.success);
+                        appendCell(row, item.failed);
                     }
 
-                    // Append the row to the table body
+                    totalSum += parseInt(item.total) || 0;
+                    successSum += parseInt(item.success) || 0;
+                    failedSum += parseInt(item.failed) || 0;
+
                     tableBody.appendChild(row);
                 });
 
-                // Show the table
+                // Add merged total row
+                const totalRow = document.createElement("tr");
+                totalRow.style.fontWeight = "bold";
+                totalRow.style.backgroundColor = "#f0f0f0";
+
+                if (groupBy3 === "date") {
+                    appendCell(totalRow, "Total");
+                    appendCell(totalRow, totalSum);
+                    appendCell(totalRow, successSum);
+                    appendCell(totalRow, failedSum);
+                } else if (groupBy3 === "account") {
+                    const mergedCell = document.createElement("td");
+                    mergedCell.colSpan = 1;
+                    mergedCell.textContent = "Total";
+                    totalRow.appendChild(mergedCell);
+                    appendCell(totalRow, totalSum);
+                    appendCell(totalRow, successSum);
+                    appendCell(totalRow, failedSum);
+                } else {
+                    const mergedCell = document.createElement("td");
+                    mergedCell.colSpan = 2;
+                    mergedCell.textContent = "Total";
+                    totalRow.appendChild(mergedCell);
+                    appendCell(totalRow, totalSum);
+                    appendCell(totalRow, successSum);
+                    appendCell(totalRow, failedSum);
+                }
+
+                tableBody.appendChild(totalRow);
                 document.getElementById('dataTable').style.display = 'table';
             }
 
+            function appendCell(row, text) {
+                const cell = document.createElement("td");
+                cell.textContent = text;
+                row.appendChild(cell);
+            }
 
-
-
-            // Export to Excel
             function exportToExcel() {
                 const table = document.getElementById("dataTable");
-                const rows = table.querySelectorAll("tbody tr");
-                const username = document.getElementById('accountname').value || "All";
-                const environment = document.getElementById('environment').value || "Default";
-                const filename = username + "_" + environment + ".xlsx";
-                if (rows.length === 0) {
-                    // Ask for confirmation if the table is empty
-                    Swal.fire({
-                        icon: 'question',
-                        title: 'Empty Table',
-                        text: 'The table is empty. Do you want to download an empty sheet?',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
-                            XLSX.writeFile(workbook, filename);
-                        }
-                    });
-                } else {
-                    const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
-                    XLSX.writeFile(workbook, filename);
-                }
+                const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+                XLSX.writeFile(workbook, "data.xlsx");
             }
 
-            // Export to CSV
             function exportToCSV() {
                 const table = document.getElementById("dataTable");
-                const rows = table.querySelectorAll("tbody tr");
-                const username = document.getElementById('accountname').value || "All";
-                const environment = document.getElementById('environment').value || "Default";
-                const filename = username + "_" + environment + ".csv";
-
-                if (rows.length === 0) {
-                    // Ask for confirmation if the table is empty
-                    Swal.fire({
-                        icon: 'question',
-                        title: 'Empty Table',
-                        text: 'The table is empty. Do you want to download an empty sheet?',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const csvContent = getCSVContent(table);
-                            downloadCSV(csvContent, filename);
-                        }
-                    });
-                } else {
-                    const csvContent = getCSVContent(table);
-                    downloadCSV(csvContent, filename);
-                }
+                const csvContent = getCSVContent(table);
+                downloadCSV(csvContent, "data.csv");
             }
 
-            // Helper function to generate CSV content
             function getCSVContent(table) {
                 const rows = table.querySelectorAll("tr");
                 let csvContent = "";
@@ -812,7 +717,6 @@
                 return csvContent;
             }
 
-            // Helper function to download CSV
             function downloadCSV(content, fileName) {
                 const blob = new Blob([content], {type: "text/csv;charset=utf-8;"});
                 const link = document.createElement("a");
@@ -821,6 +725,7 @@
                 link.click();
             }
         </script>
+
 
 
         <script>
@@ -851,7 +756,6 @@
                 });
             });
         </script>
-
         <!-- SweetAlert2 CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
@@ -861,9 +765,5 @@
         <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
             <i class="bi bi-arrow-up-short"></i>
         </a>
-
-
-
-
     </body>
 </html>

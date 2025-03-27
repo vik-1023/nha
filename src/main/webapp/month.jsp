@@ -16,9 +16,11 @@
     HttpSession s = request.getSession(false);
 
     String LogUsername = null;
+    String userType = null;
 
     if (s != null) {
         LogUsername = (String) s.getAttribute("LogUsername");
+        userType = (String) s.getAttribute("userType");
         System.out.println(LogUsername);
         if (LogUsername == null) {
             response.sendRedirect("Login");
@@ -87,7 +89,7 @@
                     margin-top: 0;
                 }
             }
-       
+
             .dropdown-menu {
                 position: absolute;
                 top: 100%;
@@ -313,20 +315,10 @@
                     <a class="nav-link" href="Dashboard">Dashboard</a> 
                 </li>
 
+                <li class="nav-item">
+                    <a href="current" class="nav-link">Reports</a>
+                </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Reports
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-
-                        <a class="nav-link" href="current">Current Day Reports</a>
-                        <a class="nav-link" href="previous">Previous Day Reports</a>
-                        <a class="nav-link" href="day"> Day Wise Reports</a>
-                        <a class="nav-link" href="weekly">Bi Weekly Reports</a>
-                        <a class="nav-link" href="month">Month Wise Reports</a>
-                        <a class="nav-link" href="quarterly">Quarterly Reports</a
-                    </div>   
                 <li class="nav-item">
                     <a href="Logout" class="nav-link">Logout</a>
                 </li>
@@ -370,35 +362,65 @@
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
-
+            <%
+                dbcon db = new dbcon();
+                db.getCon("nha_cdr");
+                String sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = '" + userType + "';";
+                ResultSet rs = db.getResult(sql);
+            %>
             <section class="section dashboard mt-5">
                 <form id="dataForm" action="NhaServlet" method="POST">
                     <div class="row">
-                          <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
                             <label for="environment">Reports</label>
                             <select class="form-select mt-2" onchange="window.location.href = this.value;">
-                                 <option value="month">Month Wise Reports</option>
+                                <option value="month">Month Wise Reports</option>
                                 <option value="current">Current Day Reports</option>
                                 <option value="previous">Previous Day Reports</option>
-                               
-                                <option value="BiWeekly.jsp">Bi Weekly Reports</option>
-                               
-                                <option value="quarterly.jsp">Quarterly Reports</option>
+
+                                <option value="BiWeekly">Bi Weekly Reports</option>
+
+                                <option value="quarterly">Quarterly Reports</option>
                             </select>
                         </div>
+                        <%
+                            if (userType != null && userType.equals("admin")) {
+                        %>
                         <div class="col-md-3 col-sm-3 col-xs-12">
                             <label for="environment">Department</label>
                             <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
-                                <option value="production">PMJAY</option>
-                                <option value="sandbox">ABDM</option>
+                                <option value="PMJAY">PMJAY</option>
+                                <option value="ABDM">ABDM</option>
                             </select>
                         </div>
+
+                        <%
+                        } else {
+                        %>
+                        <div class="col-md-3 col-sm-3 col-xs-12" style="display: Block;">
+                            <label for="environment">Department</label>
+                            <select class="form-select mt-2" id="environment" name="environment" onchange="updateUsernames()">
+                                <option value="<%=userType%>"><%= userType%></option>
+
+                            </select>
+                        </div>
+                        <%
+                            }
+
+                        %>
 
                         <!-- Username Dropdown -->
                         <div class="col-md-2 col-sm-2 col-xs-12">
                             <label for="accountname">Username</label>
                             <select class="form-select mt-2" id="accountname" name="accountname">
                                 <option value="All" selected>All</option>
+                                <%                                    while (rs.next()) {
+                                        String accountname = rs.getString("accountname");
+                                %>
+                                <option value="<%= accountname%>"><%= accountname%></option>
+                                <%
+                                    }
+                                %>
                             </select>
                         </div>
 
@@ -549,7 +571,7 @@
                     updateDisplayText('toDateDisplay', toDate);
 
                     const data = new URLSearchParams({
-                        accountname: All ? "" : accountname,
+                        accountname: accountname,
                         fromDate: fromDate,
                         toDate: toDate,
                         environment: environment,
@@ -596,101 +618,150 @@
             }
 
             function updateTable(data) {
-                const tableBody = document.querySelector("#dataTable tbody");
-                const tableHeaders = document.querySelector("#dataTable thead tr");
-                const groupBy3 = document.getElementById('groupBy3').value;
-                tableBody.innerHTML = ""; // Clear existing table data
-                tableHeaders.innerHTML = ""; // Clear existing headers
+    const tableBody = document.querySelector("#dataTable tbody");
+    const tableHeaders = document.querySelector("#dataTable thead tr");
+    const groupBy3 = document.getElementById('groupBy3').value;
+    tableBody.innerHTML = ""; // Clear existing table data
+    tableHeaders.innerHTML = ""; // Clear existing headers
 
-                // Update headers based on groupBy3
-                if (groupBy3 === "date") {
-                    tableHeaders.innerHTML =
-                            "<th>Date</th>" +
-                            "<th>Total</th>" +
-                            "<th>Success</th>" +
-                            "<th>Failed</th>";
-                } else if (groupBy3 === "account") {
-                    tableHeaders.innerHTML =
-                            "<th>Username</th>" +
-                            "<th>Total</th>" +
-                            "<th>Success</th>" +
-                            "<th>Failed</th>";
-                } else {
-                    tableHeaders.innerHTML =
-                            "<th>Date</th>" +
-                            "<th>Username</th>" +
-                            "<th>Total</th>" +
-                            "<th>Success</th>" +
-                            "<th>Failed</th>";
-                }
+    // Update headers based on groupBy3
+    if (groupBy3 === "date") {
+        tableHeaders.innerHTML =
+                "<th>Date</th>" +
+                "<th>Total</th>" +
+                "<th>Success</th>" +
+                "<th>Failed</th>";
+    } else if (groupBy3 === "account") {
+        tableHeaders.innerHTML =
+                "<th>Username</th>" +
+                "<th>Total</th>" +
+                "<th>Success</th>" +
+                "<th>Failed</th>";
+    } else {
+        tableHeaders.innerHTML =
+                "<th>Date</th>" +
+                "<th>Username</th>" +
+                "<th>Total</th>" +
+                "<th>Success</th>" +
+                "<th>Failed</th>";
+    }
 
-                data.forEach(item => {
-                    const row = document.createElement("tr");
+    let totalTotal = 0;
+    let totalSuccess = 0;
+    let totalFailed = 0;
 
-                    if (groupBy3 === "date") {
-                        // Show only Date, Total, Success, Failed
-                        const dateCell = document.createElement("td");
-                        dateCell.textContent = item.date;
-                        row.appendChild(dateCell);
+    data.forEach(item => {
+        const row = document.createElement("tr");
 
-                        const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
-                        row.appendChild(totalCell);
+        if (groupBy3 === "date") {
+            // Show only Date, Total, Success, Failed
+            const dateCell = document.createElement("td");
+            dateCell.textContent = item.date;
+            row.appendChild(dateCell);
 
-                        const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
-                        row.appendChild(successCell);
+            const totalCell = document.createElement("td");
+            totalCell.textContent = item.total;
+            row.appendChild(totalCell);
 
-                        const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
-                        row.appendChild(failedCell);
-                    } else if (groupBy3 === "account") {
-                        // Show only Username, Total, Success, Failed
-                        const usernameCell = document.createElement("td");
-                        usernameCell.textContent = item.username;
-                        row.appendChild(usernameCell);
+            const successCell = document.createElement("td");
+            successCell.textContent = item.success;
+            row.appendChild(successCell);
 
-                        const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
-                        row.appendChild(totalCell);
+            const failedCell = document.createElement("td");
+            failedCell.textContent = item.failed;
+            row.appendChild(failedCell);
+        } else if (groupBy3 === "account") {
+            // Show only Username, Total, Success, Failed
+            const usernameCell = document.createElement("td");
+            usernameCell.textContent = item.username;
+            row.appendChild(usernameCell);
 
-                        const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
-                        row.appendChild(successCell);
+            const totalCell = document.createElement("td");
+            totalCell.textContent = item.total;
+            row.appendChild(totalCell);
 
-                        const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
-                        row.appendChild(failedCell);
-                    } else {
-                        // Show all columns
-                        const dateCell = document.createElement("td");
-                        dateCell.textContent = item.date;
-                        row.appendChild(dateCell);
+            const successCell = document.createElement("td");
+            successCell.textContent = item.success;
+            row.appendChild(successCell);
 
-                        const usernameCell = document.createElement("td");
-                        usernameCell.textContent = item.username;
-                        row.appendChild(usernameCell);
+            const failedCell = document.createElement("td");
+            failedCell.textContent = item.failed;
+            row.appendChild(failedCell);
+        } else {
+            // Show all columns
+            const dateCell = document.createElement("td");
+            dateCell.textContent = item.date;
+            row.appendChild(dateCell);
 
-                        const totalCell = document.createElement("td");
-                        totalCell.textContent = item.total;
-                        row.appendChild(totalCell);
+            const usernameCell = document.createElement("td");
+            usernameCell.textContent = item.username;
+            row.appendChild(usernameCell);
 
-                        const successCell = document.createElement("td");
-                        successCell.textContent = item.success;
-                        row.appendChild(successCell);
+            const totalCell = document.createElement("td");
+            totalCell.textContent = item.total;
+            row.appendChild(totalCell);
 
-                        const failedCell = document.createElement("td");
-                        failedCell.textContent = item.failed;
-                        row.appendChild(failedCell);
-                    }
+            const successCell = document.createElement("td");
+            successCell.textContent = item.success;
+            row.appendChild(successCell);
 
-                    // Append the row to the table body
-                    tableBody.appendChild(row);
-                });
+            const failedCell = document.createElement("td");
+            failedCell.textContent = item.failed;
+            row.appendChild(failedCell);
+        }
 
-                // Show the table
-                document.getElementById('dataTable').style.display = 'table';
-            }
+        // Update totals
+        totalTotal += parseInt(item.total, 10);
+        totalSuccess += parseInt(item.success, 10);
+        totalFailed += parseInt(item.failed, 10);
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    });
+
+    // Add total row
+    const totalRow = document.createElement("tr");
+    totalRow.style.fontWeight = "bold"; // Make the total row bold
+
+    if (groupBy3 === "date") {
+        // For "date" grouping, merge the first column
+        const totalLabelCell = document.createElement("td");
+        totalLabelCell.textContent = "Total";
+        totalLabelCell.colSpan = 1; // Merge the first column
+        totalRow.appendChild(totalLabelCell);
+    } else if (groupBy3 === "account") {
+        // For "account" grouping, merge the first column
+        const totalLabelCell = document.createElement("td");
+        totalLabelCell.textContent = "Total";
+        totalLabelCell.colSpan = 1; // Merge the first column
+        totalRow.appendChild(totalLabelCell);
+    } else {
+        // For no grouping, merge the first two columns (Date and Username)
+        const totalLabelCell = document.createElement("td");
+        totalLabelCell.textContent = "Total";
+        totalLabelCell.colSpan = 2; // Merge the first two columns
+        totalRow.appendChild(totalLabelCell);
+    }
+
+    // Add total values
+    const totalCell = document.createElement("td");
+    totalCell.textContent = totalTotal;
+    totalRow.appendChild(totalCell);
+
+    const successCell = document.createElement("td");
+    successCell.textContent = totalSuccess;
+    totalRow.appendChild(successCell);
+
+    const failedCell = document.createElement("td");
+    failedCell.textContent = totalFailed;
+    totalRow.appendChild(failedCell);
+
+    // Append the total row to the table body
+    tableBody.appendChild(totalRow);
+
+    // Show the table
+    document.getElementById('dataTable').style.display = 'table';
+}
 
             function exportToExcel() {
                 const table = document.getElementById("dataTable");

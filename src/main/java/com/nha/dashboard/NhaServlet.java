@@ -27,11 +27,13 @@ public class NhaServlet extends HttpServlet {
             String accountname = request.getParameter("accountname");
             String fromDate = request.getParameter("fromDate");
             String toDate = request.getParameter("toDate");
-            String environment = request.getParameter("environment");
+            String environment = "production";
+            String department = request.getParameter("environment");
             String groupBy = request.getParameter("groupBy3");
 
+//      
             // Select the appropriate table based on the environment
-            String tbl = ("production".equals(environment)) ? "User_Counts_Api_production" : "User_Counts_Api";
+            String tbl = ("production".equals(environment)) ? "User_Counts_Api_production" : "User_Counts_Api_production";
             System.out.println("accountname: " + accountname);
             System.out.println("fromDate: " + fromDate);
             System.out.println("toDate: " + toDate);
@@ -46,7 +48,7 @@ public class NhaServlet extends HttpServlet {
             }
 
             String usernameFromSession = (String) session.getAttribute("LogUsername");
-            if (usernameFromSession == null){
+            if (usernameFromSession == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\":\"No username found in session.\"}");
                 return;
@@ -65,67 +67,72 @@ public class NhaServlet extends HttpServlet {
                 System.out.println("userType: " + userType);
             }
 
-            // Start building the SQL query
-            StringBuilder sql = new StringBuilder();
-            sql.append("SELECT ");
+            // Build SQL query dynamically
+            String sql = "SELECT ";
 
-// Adjust SELECT columns based on groupBy condition
+            // Adjust SELECT columns based on groupBy condition
             if ("date".equals(groupBy)) {
-                sql.append("t1.date, SUM(t1.Total) AS Total, SUM(t1.Success) AS Success, SUM(t1.Failed) AS Failed ");
+                sql += "t1.date, SUM(t1.Total) AS Total, SUM(t1.Success) AS Success, SUM(t1.Failed) AS Failed ";
             } else if ("account".equals(groupBy)) {
-                sql.append("t1.Username, SUM(t1.Total) AS Total, SUM(t1.Success) AS Success, SUM(t1.Failed) AS Failed ");
+                sql += "t1.Username, SUM(t1.Total) AS Total, SUM(t1.Success) AS Success, SUM(t1.Failed) AS Failed ";
             } else { // If groupBy is "none" or not provided
-                sql.append("t1.date, t1.Username, t1.Total, t1.Success, t1.Failed ");
+                sql += "t1.date, t1.Username, t1.Total, t1.Success, t1.Failed ";
             }
 
-            sql.append("FROM ").append(tbl).append(" t1 ");
+            sql += "FROM " + tbl + " t1 "
+                    + "JOIN (SELECT date, MAX(last_updated) AS max_last_updated FROM " + tbl + " GROUP BY date) t2 "
+                    + "ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated ";
 
-// Join for latest records
-            sql.append("JOIN ( ")
-                    .append("    SELECT date, MAX(last_updated) AS max_last_updated ")
-                    .append("    FROM ").append(tbl).append(" ")
-                    .append("    GROUP BY date ")
-                    .append(") t2 ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated ");
-
-// Apply filtering based on accountname
+            // Apply filtering based on accountname
+            System.out.println("Account:"+accountname);
             if ("All".equals(accountname)) {
                 if ("ABDM".equals(userType)) {
-                    sql.append("JOIN AccountDetails ad ON ad.accountname = t1.Username ")
-                            .append("WHERE ad.department = 'ABDM' AND ad.environment = '").append(environment).append("' ");
+                    sql += "JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = '" + userType + "' AND ad.environment = '" + environment + "' ";
                 } else if ("PMJAY".equals(userType)) {
-                    sql.append("JOIN AccountDetails ad ON ad.accountname = t1.Username ")
-                            .append("WHERE ad.department = 'PMJAY' AND ad.environment = '").append(environment).append("' ");
+                    sql += "JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = '" + userType + "' AND ad.environment = '" + environment + "' ";
+                } else {
+                    sql += "JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = '" + department + "' AND ad.environment = '" + environment + "' ";
+
                 }
             } else if (accountname != null && !accountname.isEmpty()) {
-                sql.append("WHERE t1.Username = '").append(accountname).append("' ");
+                sql += "JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = '" + department + "' AND ad.environment = '" + environment + "' and t1.Username = '" + accountname + "' ";
+
             }
 
-// Apply date filter
+            // Apply date filter
             if (fromDate != null && !fromDate.isEmpty() && toDate != null && !toDate.isEmpty()) {
+
                 if (fromDate.length() == 7 && toDate.length() == 7) {
-                    sql.append("AND DATE_FORMAT(t1.date, '%Y-%m') BETWEEN '").append(fromDate).append("' AND '").append(toDate).append("' ");
+
+                    sql += " AND DATE_FORMAT(t1.date, '%Y-%m') BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
+                    //sql += " JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = '" + department + "' ";
+
                 } else if (fromDate.length() == 10 && toDate.length() == 10) {
-                    sql.append("AND t1.date BETWEEN '").append(fromDate).append("' AND '").append(toDate).append("' ");
+                    sql += "AND t1.date BETWEEN '" + fromDate + "' AND '" + toDate + "' ";
+                } else {
+                    sql += "JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = '" + department + "' AND ad.environment = '" + environment + "' and t1.Username = '" + accountname + "' ";
+
                 }
             }
 
-// Apply GROUP BY based on the `groupBy` parameter
+            // Apply GROUP BY based on the groupBy parameter
             if ("date".equals(groupBy)) {
-                sql.append("GROUP BY t1.date ");
+                sql += "GROUP BY t1.date ";
             } else if ("account".equals(groupBy)) {
-                sql.append("GROUP BY t1.Username ");
+                sql += "GROUP BY t1.Username ";
             }
 
-// Apply dynamic ORDER BY to avoid SQL error
+            // Apply dynamic ORDER BY to avoid SQL error
             if ("date".equals(groupBy)) {
-                sql.append("ORDER BY t1.date ");
+                sql += "ORDER BY t1.date ";
             } else if ("account".equals(groupBy)) {
-                sql.append("ORDER BY t1.Username ");
+                sql += "ORDER BY t1.Username ";
             }
+            System.out.println("Exexcuting:" + sql);
 
             // Execute the SQL query
-            ResultSet rs = stmt.executeQuery(sql.toString());
-            System.out.println("SQL Query: " + sql.toString());
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("SQL Query: " + sql);
 
             // Prepare the JSON response
             JSONArray jsonArray = new JSONArray();
@@ -133,7 +140,6 @@ public class NhaServlet extends HttpServlet {
             // Iterate through the result set and construct JSON objects
             while (rs.next()) {
                 JSONObject jsonObject = new JSONObject();
-
                 if (!"account".equals(groupBy)) { // Show date only if not grouped by account
                     String date = rs.getString("date");
                     if (date != null) {
@@ -149,9 +155,9 @@ public class NhaServlet extends HttpServlet {
                 }
 
                 // Remove decimal points or points from total, success, and failed values
-                String total = rs.getString("Total");
-                String success = rs.getString("Success");
-                String failed = rs.getString("Failed");
+                String total = rs.getInt("Total")+"";
+                String success = rs.getInt("Success")+"";
+                String failed = rs.getInt("Failed")+"";
 
                 if (total != null) {
                     total = total.split("\\.")[0]; // Remove decimals if present

@@ -1,6 +1,4 @@
-
 package db;
-
 
 import java.sql.*;
 
@@ -12,7 +10,7 @@ public class dbcon {
     // "jdbc:mysql://localhost:3306/";
 
     //String url = "jdbc:mysql://localhost:3306/";
-  String url = "jdbc:mysql://182.18.144.225:3306/";
+    String url = "jdbc:mysql://182.18.144.225:3306/";
     ResultSet rs = null;
     String userName = "reports";
     String password = "reports@#123";

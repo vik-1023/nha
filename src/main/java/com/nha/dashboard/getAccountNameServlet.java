@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package com.nha.dashboard;
 
 /**
@@ -13,10 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import com.google.gson.Gson;
 import db.dbcon;
 import java.io.IOException;
@@ -80,11 +75,11 @@ public class getAccountNameServlet extends HttpServlet {
                 // Admins are allowed to view all account names without filtering by department
                 response.setStatus(HttpServletResponse.SC_OK);
                 String sql = "";
-                if ("production".equals(environment)) {
-                   sql = "SELECT accountname FROM AccountDetails WHERE department = 'PMJAY';";
-                } else if ("sandbox".equals(environment)) {
+                if ("PMJAY".equals(environment)) {
+                   sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = 'PMJAY';";
+                } else if ("ABDM".equals(environment)) {
                     
-                    sql = "SELECT accountname FROM AccountDetails WHERE department = 'ABDM';";
+                    sql = "SELECT  DISTINCT accountname FROM AccountDetails WHERE department = 'ABDM';";
                 }
 
                 // Execute the SQL query for admin
@@ -127,20 +122,20 @@ public class getAccountNameServlet extends HttpServlet {
         if ("ABDM".equals(userType)) {
             if ("production".equals(environment)) {
                 // If environment is 'production' for 'ABDM', fetch from production
-                sql = "SELECT accountname FROM AccountDetails WHERE department = 'ABDM';";
+                sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = 'ABDM';";
             } else if ("sandbox".equals(environment)) {
                 // If environment is 'sandbox' for 'ABDM', fetch from sandbox
-               sql = "SELECT accountname FROM AccountDetails WHERE department = 'ABDM';";
+               sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = 'ABDM';";
             }
         } else if ("PMJAY".equals(userType)) {
             if ("production".equals(environment)) {
                 // If environment is 'production' for 'PMJAY', fetch from production
                 //sql = "SELECT accountname FROM AccountDetails WHERE environment = 'production' AND department IN ('PMJAY');";
-                sql = "SELECT accountname FROM AccountDetails WHERE department = 'PMJAY';";
+                sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = 'PMJAY';";
             } else if ("sandbox".equals(environment)) {
                 // If environment is 'sandbox' for 'PMJAY', fetch from sandbox
                 //sql = "SELECT accountname FROM AccountDetails WHERE environment = 'sandbox' AND department IN ('PMJAY');";
-                sql = "SELECT accountname FROM AccountDetails WHERE department = 'PMJAY';";
+                sql = "SELECT DISTINCT accountname FROM AccountDetails WHERE department = 'PMJAY';";
             }
         } else {
             // Handle invalid or unauthorized user types

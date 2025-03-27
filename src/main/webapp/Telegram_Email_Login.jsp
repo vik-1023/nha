@@ -200,7 +200,7 @@ button#submitBtn {
                             <form enctype="multipart/form-data" method="post" action="telegramLoginServlet">
                                 <div class="form-group">
                                     <label class="form-control-label text-white">USERNAME</label>
-                                    <input type="text"  style="text-transform: lowercase" class="form-control" name="username" id="username">
+                                    <input type="text" class="form-control" name="username" id="username">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-control-label text-white">PASSWORD</label>

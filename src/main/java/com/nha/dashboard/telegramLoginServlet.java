@@ -93,6 +93,7 @@ public class telegramLoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String OtpInpt = request.getParameter("OtpInpt");
         String otpType = request.getParameter("otpType");
+        String userType = request.getParameter("otpType");
 
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
@@ -124,7 +125,7 @@ public class telegramLoginServlet extends HttpServlet {
         }
 
         //    String Login_data = "select  name,pass from login where name='" + log + "' and pass='" + pass + "'"; and pswd=MD5(" + pass + ") 
-        String Login_data = "select username ,password,chat_id,email from users where username ='" + username + "' and password='" + password + "'and status='true' ";
+        String Login_data = "select username ,password,chat_id,email,user_type from users where username ='" + username + "' and password='" + password + "'and status='true' ";
         System.out.println(Login_data);
 
         ResultSet rs = db.getResult(Login_data);
@@ -135,6 +136,7 @@ public class telegramLoginServlet extends HttpServlet {
                 LogPassword = rs.getString("password");
                 Logchat_id = rs.getString("chat_id");
                 email = rs.getString("email");
+                userType = rs.getString("user_type");
 
             }
         } catch (SQLException ex) {
@@ -151,6 +153,7 @@ public class telegramLoginServlet extends HttpServlet {
             if (OtpInpt != null && OtpInpt.equals(Session_otp)) {
                 if ((username.equals(LogUsername))) {
                     session.setAttribute("LogUsername", LogUsername);
+                    session.setAttribute("userType", userType);
                     out.println("Success");
 
                 }
@@ -168,7 +171,9 @@ public class telegramLoginServlet extends HttpServlet {
                         chk = sendTelegramMsg(Session_otp, Logchat_id);
 
                     } else if (otpType != null && otpType.equals("email")) {
-                        chk = sendOtpMail(Session_otp, email,LogUsername);
+                        chk = sendOtpMail(Session_otp, email, LogUsername);
+
+                        System.out.println(" email Session_otp : " + Session_otp);
                     }
                     out.println(chk);
                 } catch (Exception e) {
@@ -263,7 +268,7 @@ public class telegramLoginServlet extends HttpServlet {
         return returnmsg;
     }
 
-    private String sendOtpMail(String Session_otp, String email,String LogUsername) {
+    private String sendOtpMail(String Session_otp, String email, String LogUsername) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String currentDateTime = sdf.format(new Date());
 //        String msg = "<html>"
@@ -281,7 +286,7 @@ public class telegramLoginServlet extends HttpServlet {
                 + "<div style='background: #fff; padding: 20px; max-width: 400px; margin: auto; border-radius: 8px; "
                 + "box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);'>"
                 + "<h2>Your OTP Code for Login sms24hours</h2>"
-                + "<p>Hello <strong>"+LogUsername+"</strong>,</p>"
+                + "<p>Hello <strong>" + LogUsername + "</strong>,</p>"
                 + "<p>Your One-Time Password (OTP) for <strong>cdr.sms24hours</strong> is:</p>"
                 + "<div id='otpBox' onclick='copyOTP()' "
                 + "style='font-size: 24px; font-weight: bold; color: #007bff; padding: 10px; "

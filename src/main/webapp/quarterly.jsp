@@ -41,6 +41,10 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
         <!-- SheetJS Library for Excel Export -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
         <style>
             /* General body styles */
             body {
@@ -51,14 +55,23 @@
             }
 
             /* Container for the form and report */
-            .container {
+            .container{
                 max-width: 1000px;
-                margin: 50px auto;
+                margin: 94px auto;
                 padding: 30px;
                 background-color: #ffffff;
                 border-radius: 12px;
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             }
+            .total-row {
+                font-weight: bold;
+                background-color: #f2f2f2;
+            }
+
+           
+
+            /* Highlight individual cells in the total row */
+        
 
             /* Heading styles */
             h2 {
@@ -80,12 +93,12 @@
             form {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 40px;
+                gap: 80px;
             }
 
             form > div {
                 flex: 1;
-                min-width: 200px;
+                min-width: 170px;
             }
 
             label {
@@ -110,11 +123,11 @@
             input[type="date"]:focus,
             select:focus {
                 border-color: #007bff;
+                color: var(--bs-body-color);
             }
 
             button {
-                background-color: #007bff;
-                color: #ffffff;
+
                 padding: 12px 24px;
                 font-size: 16px;
                 font-weight: 500;
@@ -122,16 +135,11 @@
                 border-radius: 6px;
                 cursor: pointer;
                 transition: background-color 0.3s ease, transform 0.2s ease;
+                margin-top: 25px;
             }
 
-            button:hover {
-                background-color: #0056b3;
-                transform: translateY(-2px);
-            }
 
-            button:active {
-                transform: translateY(0);
-            }
+
 
             /* Download buttons */
             .download-buttons {
@@ -141,12 +149,10 @@
 
             .download-buttons button {
                 margin-left: 10px;
-                background-color: #28a745;
+
             }
 
-            .download-buttons button:hover {
-                background-color: #218838;
-            }
+
 
             /* Loading spinner */
             .spinner {
@@ -245,9 +251,9 @@
                     width: 100%;
                 }
             }
-            
-            
-            
+
+
+
             .header {
                 background-color: #fff;
                 padding: 10px 20px;
@@ -267,11 +273,125 @@
                 float: left;
                 width: 93%;
             }
+
+
+
+            /* Sidebar Styles */
+            .sidebar {
+                width: 250px;
+                height: 100vh;
+                background-color: #2c3e50;
+                position: absolute;
+                top: 63px;
+                left: 0;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar-nav {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .sidebar-nav .nav-item {
+                padding: 3px 20px;
+            }
+
+            .sidebar-nav .nav-link {
+                text-decoration: none;
+                font-size: 16px;
+                display: block;
+                color: #000000;
+                background-color: #fff;
+                border-radius: 2px;
+                padding: 10px;
+            }
+
+            .sidebar-nav .nav-link:hover {
+                background-color: #fff;
+                color:#000;
+            }
+
+            .dropdown-menu {
+                position: absolute;
+                top: 100%;
+                left: 20px;
+                z-index: 1000;
+                display: none;
+                float: left;
+                min-width: 13rem;
+                padding: 0.5rem 0;
+                margin: 0.125rem 0 0;
+                font-size: 1rem;
+                color: #000000;
+                text-align: left;
+                list-style: none;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid #e0e0ef;
+                border-radius: 0.25rem;
+            }
+
+            #main, #footer {
+                margin-left: 251px;
+                background-color: #e9e9e9;
+            }
+            #main {
+                margin-top: 60px;
+                padding: 20px 30px;
+                transition: all 0.3s;
+                background-color: #e9e9e9;
+            }
+            .rept {
+                width: 100%;
+                gap: 55px;
+            }
+            .subm {
+                margin-top: 0;
+                padding: 10px 14px;
+                background-color: #198754;
+                color: #fff;
+                font-size: 14px;
+            }
+            .top01 {
+                position: relative;
+                bottom: 40px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 30px;
+                box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            th {
+                background-color: #007bff00;
+                color: #000000;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 14px;
+            }
         </style>
     </head>
     <body>
-        
-        
+        <aside id="sidebar" class="sidebar" style=" position: fixed;">
+            <ul class="sidebar-nav">
+                <li class="nav-item mt-3">
+                    <a class="nav-link" href="Dashboard">Dashboard</a> 
+                </li>
+
+                <li class="nav-item">
+                    <a href="current" class="nav-link">Reports</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="Logout" class="nav-link">Logout</a>
+                </li>
+            </ul>
+        </aside>
+
         <header id="header" class="header fixed-top d-flex align-items-center">
             <!-- Menu Icon (Visible only on smaller screens) -->
             <div class="menu-icon d-block d-md-none" onclick="toggleSidebar()">
@@ -285,65 +405,50 @@
             <div class="right-logo">
                 <img src="https://abdm.gov.in:8081/uploads/NHA_logo_hd_3099160d92.svg" alt="National Health Authority" class="nha-logo">
             </div>
-
         </header>
-        
-        
-        
-        
-        <div class="container">
-            <h2>Quarterly Report</h2>
+        <main class="main" id="main">
+            <h2 style="color: #333;">Quarterly Report</h2>
 
             <!-- Form to select start and end dates, and group by -->
-            <form id="reportForm">
-
-                <div>
+            <form id="reportForm" class="rept">
+                <div class="col-md-3 col-sm-3 col-xs-12">
                     <label for="environment">Reports</label>
                     <select class="form-select mt-2" onchange="window.location.href = this.value;">
-                         <option value="quarterly.jsp">Quarterly Reports</option>
+                        <option value="quarterly">Quarterly Reports</option>
                         <option value="current">Current Day Reports</option>
                         <option value="previous">Previous Day Reports</option>
-
-                        <option value="BiWeekly.jsp">Bi Weekly Reports</option>
+                        <option value="BiWeekly">Bi Weekly Reports</option>
                         <option value="month">Month Wise Reports</option>
-                       
                     </select>
                 </div>
-                <div>
+                <div class="col-md-2 col-sm-2 col-xs-12">
                     <label for="startDate">Start Date:</label>
                     <input type="date" id="startDate" name="startDate" required>
                 </div>
 
-
-
-                <div>
+                <div class="col-md-2 col-sm-2 col-xs-12">
                     <label for="endDate">End Date:</label>
                     <input type="date" id="endDate" name="endDate" required>
                 </div>
 
-                <div>
+                <div class="col-md-3 col-sm-3 col-xs-12">
                     <label for="groupBy">Group By:</label>
                     <select id="groupBy" name="groupBy" required>
                         <option value="none">None</option>
-                        <option value="date">Date</option>
+                        <option value="date">Quarterly Period</option>
                         <option value="username">Username</option>
                     </select>
                 </div>
 
-
-
-
-
-
-                <div>
-                    <button type="submit">Submit</button>
+                <div class="col-md-2 col-sm-2 col-xs-12 top01">
+                    <button class="subm" type="submit">Submit</button>
                 </div>
             </form>
 
             <!-- Download Buttons -->
             <div class="download-buttons">
-                <button id="exportExcel"><i class="fas fa-file-excel"></i> Export to Excel</button>
-                <button id="exportCSV"><i class="fas fa-file-csv"></i> Export to CSV</button>
+                <button id="exportExcel"class="btn btn-primary"><i class="fas fa-file-excel"></i> Export to Excel</button>
+                <button id="exportCSV"class="btn btn-secondary"><i class="fas fa-file-csv"></i> Export to CSV</button>
             </div>
 
             <!-- Loading Spinner -->
@@ -369,36 +474,40 @@
                     <!-- Data will be dynamically inserted here by AJAX -->
                 </tbody>
             </table>
-        </div>
-
+        </main>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script>
-                        // Function to get the default start and end date for the current quarter
+                        // Function to get the default start and end date for the current quarter based on financial year
                         function getQuarterDates() {
-                            var now = new Date();
-                            var currentMonth = now.getMonth();
-                            var currentYear = now.getFullYear();
-                            var startDate = '';
-                            var endDate = '';
+                            const now = new Date();
+                            const currentMonth = now.getMonth(); // 0 = January, 11 = December
+                            const currentYear = now.getFullYear();
+                            let startDate, endDate;
 
-                            // Determine the current quarter and set the start and end dates
-                            if (currentMonth >= 0 && currentMonth <= 2) { // Q1: Jan 1 - Mar 31
-                                startDate = new Date(currentYear, 0, 1); // January 1st
-                                endDate = new Date(currentYear, 2, 31);  // March 31st
-                            } else if (currentMonth >= 3 && currentMonth <= 5) { // Q2: Apr 1 - Jun 30
-                                startDate = new Date(currentYear, 3, 1); // April 1st
-                                endDate = new Date(currentYear, 5, 30);  // June 30th
-                            } else if (currentMonth >= 6 && currentMonth <= 8) { // Q3: Jul 1 - Sep 30
-                                startDate = new Date(currentYear, 6, 1); // July 1st
-                                endDate = new Date(currentYear, 8, 30);  // September 30th
-                            } else { // Q4: Oct 1 - Dec 31
-                                startDate = new Date(currentYear, 9, 1); // October 1st
-                                endDate = new Date(currentYear, 11, 31); // December 31st
+                            // Adjust based on financial year starting from April 1st
+                            if (currentMonth >= 0 && currentMonth <= 2) { // Q4: Jan 1 - Mar 31
+                                startDate = new Date(currentYear, 0, 1); // Start date for Q4 (Jan 1)
+                                endDate = new Date(currentYear, 2, 31);  // End date for Q4 (Mar 31)
+                            } else if (currentMonth >= 3 && currentMonth <= 5) { // Q1: Apr 1 - Jun 30
+                                startDate = new Date(currentYear, 3, 1); // Start date for Q1 (Apr 1)
+                                endDate = new Date(currentYear, 5, 30);  // End date for Q1 (Jun 30)
+                            } else if (currentMonth >= 6 && currentMonth <= 8) { // Q2: Jul 1 - Sep 30
+                                startDate = new Date(currentYear, 6, 1); // Start date for Q2 (Jul 1)
+                                endDate = new Date(currentYear, 8, 30);  // End date for Q2 (Sep 30)
+                            } else { // Q3: Oct 1 - Dec 31
+                                startDate = new Date(currentYear, 9, 1); // Start date for Q3 (Oct 1)
+                                endDate = new Date(currentYear, 11, 31); // End date for Q3 (Dec 31)
                             }
 
                             // Convert dates to yyyy-mm-dd format for input fields
-                            var startDateStr = startDate.toISOString().split('T')[0];
-                            var endDateStr = endDate.toISOString().split('T')[0];
+                            const formatDate = (date) => {
+                                return date.getFullYear() + "-" +
+                                        String(date.getMonth() + 1).padStart(2, "0") + "-" +
+                                        String(date.getDate()).padStart(2, "0");
+                            };
+
+                            const startDateStr = formatDate(startDate);
+                            const endDateStr = formatDate(endDate);
 
                             // Set the default values in the form fields
                             document.getElementById('startDate').value = startDateStr;
@@ -410,13 +519,13 @@
                             getQuarterDates();
                         };
 
-                        // Handle form submission
+// Handle form submission
                         $('#reportForm').on('submit', function (event) {
                             event.preventDefault();
 
-                            var startDate = $('#startDate').val();
-                            var endDate = $('#endDate').val();
-                            var groupBy = $('#groupBy').val();
+                            const startDate = $('#startDate').val();
+                            const endDate = $('#endDate').val();
+                            const groupBy = $('#groupBy').val();
 
                             // Show loading spinner
                             $('#spinner').show();
@@ -452,26 +561,56 @@
                                             $('#quarterColumn').hide();   // Hide Quarterly Period column
                                         }
 
+                                        let totalTotal = 0;
+                                        let totalSuccess = 0;
+
                                         // Populate table with data based on groupBy option
                                         data.forEach(function (item) {
-                                            var row = '<tr>';
+                                            const row = $('<tr>');
 
                                             // Handle different groupBy cases
                                             if (groupBy === "none" || groupBy === "username") {
-                                                row += '<td>' + item.Username + '</td>';
+                                                row.append($('<td>').text(item.Username));
                                             }
 
                                             if (groupBy === "none" || groupBy === "date") {
-                                                row += '<td>' + item.Quarterly_Period + '</td>';
+                                                row.append($('<td>').text(item.Quarterly_Period));
                                             }
 
                                             // Add Total and Success columns
-                                            row += '<td>' + item.Total + '</td>' +
-                                                    '<td>' + item.Success + '</td>' +
-                                                    '</tr>';
+                                            row.append(
+                                                    $('<td>').text(item.Total),
+                                                    $('<td>').text(item.Success)
+                                                    );
+
+                                            // Update totals
+                                            totalTotal += item.Total;
+                                            totalSuccess += item.Success;
 
                                             $('#reportTable tbody').append(row);
                                         });
+
+                                        // Add total row with highlighting
+                                        const totalRow = $('<tr>').addClass('total-row');
+
+                                        // Add "Total" label in the correct column based on groupBy
+                                        if (groupBy === "none") {
+                                            totalRow.append($('<td>').text('Total').addClass('highlight'));
+                                            totalRow.append($('<td>').text('').addClass('highlight')); // Empty cell for Quarterly Period
+                                        } else if (groupBy === "date") {
+                                            totalRow.append($('<td>').text('Total').addClass('highlight')); // "Total" label in the first column
+                                        } else if (groupBy === "username") {
+                                            totalRow.append($('<td>').text('Total').addClass('highlight'));
+                                        }
+
+                                        // Add Total and Success values
+                                        totalRow.append(
+                                                $('<td>').text(totalTotal).addClass('highlight'),
+                                                $('<td>').text(totalSuccess).addClass('highlight')
+                                                );
+
+                                        $('#reportTable tbody').append(totalRow);
+
                                     } else {
                                         // If no data is found, show message
                                         $('#errorMessage').text('No data found for the selected date range.');
@@ -487,21 +626,24 @@
                             });
                         });
 
+
+
+
                         // Function to export table data to Excel
                         $('#exportExcel').on('click', function () {
-                            var table = document.getElementById('reportTable');
-                            var workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+                            const table = document.getElementById('reportTable');
+                            const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
                             XLSX.writeFile(workbook, 'QuarterlyReport.xlsx');
                         });
 
                         // Function to export table data to CSV
                         $('#exportCSV').on('click', function () {
-                            var table = document.getElementById('reportTable');
-                            var rows = table.querySelectorAll('tr');
-                            var csv = [];
+                            const table = document.getElementById('reportTable');
+                            const rows = table.querySelectorAll('tr');
+                            const csv = [];
 
                             // Extract headers
-                            var headers = [];
+                            const headers = [];
                             table.querySelectorAll('th').forEach(function (th) {
                                 headers.push(th.innerText);
                             });
@@ -509,7 +651,7 @@
 
                             // Extract rows
                             rows.forEach(function (row) {
-                                var rowData = [];
+                                const rowData = [];
                                 row.querySelectorAll('td').forEach(function (td) {
                                     rowData.push(td.innerText);
                                 });
@@ -517,9 +659,9 @@
                             });
 
                             // Create CSV file
-                            var csvContent = "data:text/csv;charset=utf-8," + csv.join('\n');
-                            var encodedUri = encodeURI(csvContent);
-                            var link = document.createElement('a');
+                            const csvContent = "data:text/csv;charset=utf-8," + csv.join('\n');
+                            const encodedUri = encodeURI(csvContent);
+                            const link = document.createElement('a');
                             link.setAttribute('href', encodedUri);
                             link.setAttribute('download', 'QuarterlyReport.csv');
                             document.body.appendChild(link);
