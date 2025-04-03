@@ -84,7 +84,7 @@ public class NhaServlet extends HttpServlet {
                     + "ON t1.date = t2.date AND t1.last_updated = t2.max_last_updated ";
 
             // Apply filtering based on accountname
-            System.out.println("Account:"+accountname);
+            System.out.println("Account:" + accountname);
             if ("All".equals(accountname)) {
                 if ("ABDM".equals(userType)) {
                     sql += "JOIN AccountDetails ad ON ad.accountname = t1.Username WHERE ad.department = '" + userType + "' AND ad.environment = '" + environment + "' ";
@@ -155,9 +155,9 @@ public class NhaServlet extends HttpServlet {
                 }
 
                 // Remove decimal points or points from total, success, and failed values
-                String total = rs.getInt("Total")+"";
-                String success = rs.getInt("Success")+"";
-                String failed = rs.getInt("Failed")+"";
+                String total = rs.getInt("Total") + "";
+                String success = rs.getInt("Success") + "";
+                String failed = rs.getInt("Failed") + "";
 
                 if (total != null) {
                     total = total.split("\\.")[0]; // Remove decimals if present
